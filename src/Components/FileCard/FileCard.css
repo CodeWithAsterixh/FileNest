@@ -1,0 +1,154 @@
+.file-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: box-shadow 0.3s;
+    flex-grow: 1;
+    flex-basis: 180px;
+    max-width: 300px;
+    position: relative;
+  }
+  .file-card .options{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 20px);
+    height: fit-content;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 5px;
+    list-style-type: none;
+    padding: 0 10px;
+    margin: 0;
+    background-color: #0000009a;
+    z-index: 1;
+  }
+  .file-card .options li{
+    width: fit-content;
+    height: fit-content;
+    cursor: pointer;
+    padding: 5px;
+  }
+  .file-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .file-card-preview {
+    height: 120px;
+    overflow: hidden;
+    width: calc(100% - 5px);
+    margin: auto;
+    margin-top: 2.5px;
+    border-radius: 5px;
+
+  }
+  
+  .file-card-preview img {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: cover;
+  }
+  .file-card:hover .file-card-preview img{
+    transform: scale(1.1);
+    transition-duration: 5s;
+    -webkit-transition-duration: 5s;
+    z-index: 0;
+  }
+  .file-card .file-card-preview .file-card-icon {
+    background-color: var(--baseBlack200);
+  }
+  .file-card:hover .file-card-preview .file-card-icon {
+    background-color: var(--baseBlack500);
+    transition-duration: 500ms;
+    -webkit-transition-duration: 500ms;
+  }
+  
+  .file-card-details {
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .file-card-details span .name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 70%;
+    width: fit-content;
+    font-style: normal;
+    text-align: center;
+}
+.file-card-details span input {
+  overflow: scroll;
+  
+  max-width: calc(100% - 24px);
+  background-color: var(--none);
+  color: var(--baseBlack1000);
+  width: fit-content;
+  font-style: normal;
+  text-align: center;
+  font-size: var(--h5);
+  border: 2px solid var(--baseBlack1000) !important;
+  outline: none;
+}
+
+  
+.file-card-details span .ext {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: fit-content;
+  width: fit-content;
+  font-style: normal;
+  text-align: center;
+
+}
+
+  .file-card-name {
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    font-size: var(--h6);
+    overflow: hidden;
+    white-space: nowrap;
+    /* text-overflow: ellipsis; */
+    min-width: calc(100% - 20px);
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .file-card-icon {
+    margin-top: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .file-card-details .file-card-icon {
+    margin-top: 10px;
+    width: 20;
+    height: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Media query to hide text on smaller screens */
+@media (max-width: 600px) {
+    .file-card {
+        flex-grow: 1;
+        flex-basis: 30vw;
+        max-width: 45vw;
+      }
+
+}

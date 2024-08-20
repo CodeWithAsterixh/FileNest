@@ -1,0 +1,187 @@
+#root {
+  max-width: 100vw;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+.Modal .skip{
+  width: fit-content;
+  min-width: 20%;
+  height: fit-content;
+  background-color: var(--secondary100);
+  border: 1px solid var(--secondary1000);
+  color: var(--secondary1000);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: var(--h5);
+  align-self: flex-end;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  user-select: none;
+}
+.Modal .skip:active{
+  transform: scale(0.95);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  border: 2px solid var(--secondary1000);
+  background-color: var(--secondary200);
+
+}
+.createPassword{
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+
+}
+.createPassword .input {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.createPassword .input input{
+  width: calc(300px - 30px);
+  max-width: calc(80vw - 30px);
+  background-color: var(--primary100);
+  outline: none;
+  border: 1px solid var(--secondary1000);
+  padding: 10px;
+  font-size: var(--h4);
+  border-radius: 10px;
+  color: var(--secondary1000);
+}
+.createPassword .input input:focus{
+  border: 2px solid var(--secondary1000);
+  -webkit-transition-duration: 200ms;
+  transition-duration: 200ms;
+
+}
+.createPassword .input button{
+  width: fit-content;
+  height: fit-content;
+  background-color: var(--primary100);
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border: 1px solid var(--secondary1000);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  cursor: pointer;
+
+}
+.createPassword .input button.show{
+  background-color: var(--secondary500);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+}
+
+
+.createPassword .enter{
+  width: fit-content;
+  min-width: 50%;
+  height: fit-content;
+  background-color: var(--secondary100);
+  border: 1px solid var(--secondary1000);
+  color: var(--secondary1000);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: var(--h5);
+}
+.createPassword .enter:active{
+  transform: scale(0.95);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  border: 2px solid var(--secondary1000);
+  background-color: var(--secondary200);
+}
+
+
+
+.inputPassword{
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+
+}
+.inputPassword .input {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.inputPassword .input input{
+  width: calc(300px - 30px);
+  max-width: calc(80vw - 30px);
+  background-color: var(--primary100);
+  outline: none;
+  border: 1px solid var(--secondary1000);
+  padding: 10px;
+  font-size: var(--h4);
+  border-radius: 10px;
+  color: var(--secondary1000);
+}
+.inputPassword .input input:focus{
+  border: 2px solid var(--secondary1000);
+  -webkit-transition-duration: 200ms;
+  transition-duration: 200ms;
+
+}
+.inputPassword .input button{
+  width: fit-content;
+  height: fit-content;
+  background-color: var(--primary100);
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border: 1px solid var(--secondary1000);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  cursor: pointer;
+
+}
+.inputPassword .input button.show{
+  background-color: var(--secondary500);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+}
+.inputPassword .enter{
+  width: fit-content;
+  min-width: 50%;
+  height: fit-content;
+  background-color: var(--secondary100);
+  border: 1px solid var(--secondary1000);
+  color: var(--secondary1000);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: var(--h5);
+}
+.inputPassword .enter:active{
+  transform: scale(0.95);
+  transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  border: 2px solid var(--secondary1000);
+  background-color: var(--secondary200);
+}

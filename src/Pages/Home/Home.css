@@ -1,0 +1,15 @@
+.Home{
+    width: 100%;
+    height: fit-content;
+}
+.Home .filesContainer{
+    width: calc(100% - 40px);
+    padding: 20px;
+    height: fit-content;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}

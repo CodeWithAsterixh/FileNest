@@ -1,0 +1,89 @@
+.colorPalette{
+    width: calc(100% - 40px);
+    background-color: aliceblue;
+    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 20px;
+    zoom: 70%;
+    padding: 50px 20px;
+}
+.colorPalette h1{
+    color: var(--baseBlack1000);
+
+}
+.colorPalette ul{
+    width: 100%;
+    height: fit-content;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+}
+.colorPalette ul h1{
+    font-size: 1rem;
+    width: 100%;
+    text-align: left;
+}
+.colorPalette ul li{
+    width: 150px;
+    height: 100px;
+    background-color: aquamarine;
+    border-radius: 5px;
+    flex-grow: 3;
+    flex-basis: 150px;
+    max-width: 10rem;
+    position: relative;
+    overflow: hidden;
+}
+.colorPalette ul li .textColorCode{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(31, 31, 31, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.colorPalette ul li .textColorCode button{
+    width: fit-content;
+    height: fit-content;
+    color: var(--baseBlack500);
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 5px 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    transform: translateY(100px);
+}
+.colorPalette ul li .textColorCode b{
+    filter: invert(100%);
+    transform: translateY(100px);
+}
+.colorPalette ul li .textColorCode::before{
+    content: attr(data-before);
+    filter: invert(100%);
+    /* opacity: 0%; */
+    transform: translateY(100%);
+}
+.colorPalette ul li:hover .textColorCode{
+    background-color: rgba(31, 31, 31, 0.509);
+    backdrop-filter: blur(100px) grayScale(10%);
+    transition-duration: 500ms;
+}
+
+.colorPalette ul li:hover .textColorCode b,
+.colorPalette ul li:hover .textColorCode button,
+.colorPalette ul li:hover .textColorCode::before{
+    transform: translateY(0);
+    filter: invert(0%);
+    transition-duration: 500ms;
+    transition-delay: 200ms;
+}
