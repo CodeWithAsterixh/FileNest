@@ -5,6 +5,7 @@ import './FileCard.css';
 import { FileImage, FilePdf, FileVideo, FileAudio, FileText, FilePpt, Download, FileArrowDown, Trash } from '@phosphor-icons/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { db } from '../../Functions/DB';
+import { deleteFile } from '../../Redux/ReducersAction';
 
 const FileCard = ({ file }) => {
     const [imgError, setImgError] = useState(false);
@@ -83,7 +84,7 @@ const FileCard = ({ file }) => {
         try {
             await db.deleteFile(file.id); // Assuming deleteFile is implemented in your DB class
             // Dispatch an action to remove the file from the Redux store
-            // dispatch(deleteFile({ id: file.id }));
+            dispatch(deleteFile({ id: file.id }));
         } catch (error) {
             console.error('Failed to delete file:', error);
         }
@@ -94,9 +95,10 @@ const FileCard = ({ file }) => {
         try {
             const fileBlob = await db.getFileBlob(file.id, password);
             if (fileBlob) {
-                const fileURL = URL.createObjectURL(fileBlob);
+                // const fileURL = URL.createObjectURL(fileBlob);
+                const url = db.handleRetrieveFile(file.id, password)
                 const link = document.createElement('a');
-                link.href = fileURL;
+                link.href = file.preview;
                 link.download = file.fileName;
                 link.click();
             }
@@ -108,15 +110,22 @@ const FileCard = ({ file }) => {
     return (
         <div className="file-card">
             <ul className="options">
-                <li className="option" id='open' onClick={() => db.handleRetrieveFile(file.id, password)}>
-                    <FileText size={20} weight='bold' color="var(--secondary100)" />
-                </li>
+                {
+                  file.type.includes('image')?
+                    <>
+                      <li className="option" id='open' onClick={() => db.handleRetrieveFile(file.id, password)}>
+                          <FileText size={20} weight='bold' color="var(--secondary100)" />
+                      </li>
+                      <li className="option" id='download' onClick={handleDownload}>
+                          <FileArrowDown size={20} weight='bold' color="var(--secondary100)" />
+                      </li>
+                    </>
+                  :null
+                }
                 <li className="option" id='delete file' onClick={handleDelete}>
                     <Trash size={20} weight='bold' color="var(--secondary100)" />
                 </li>
-                <li className="option" id='download' onClick={handleDownload}>
-                    <FileArrowDown size={20} weight='bold' color="var(--secondary100)" />
-                </li>
+                
             </ul>
             <div className="file-card-preview">
                 {imgError || !file.preview ? (

@@ -13,3 +13,35 @@
     flex-wrap: wrap;
     gap: 20px;
 }
+
+.Home .nofile{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+.Home .nofile svg{
+    cursor: pointer;
+}
+.Home .uploading{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+.Home .uploading svg{
+    animation: showUploading 1s infinite;
+    animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}

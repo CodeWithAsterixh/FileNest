@@ -30,7 +30,7 @@ class DB {
       const fileId = file.id || this.generateId();
       const dataToSave = {
         id: fileId,
-        fileType: file.type,
+        fileType: file.fileType,
         blob: encryptedFile,
       };
       await store.put(dataToSave);
@@ -133,6 +133,8 @@ class DB {
       const fileBlob = await this.getFileBlob(id, password);
       if (fileBlob) {
         const fileURL = URL.createObjectURL(fileBlob);
+        console.log(fileURL);
+        
         return fileURL;
       } else {
         console.log('File not found');

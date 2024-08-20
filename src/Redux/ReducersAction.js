@@ -12,14 +12,20 @@ const filesSlice = createSlice({
     },
     addFile: (state, action) => {
       const { file, password } = action.payload;
-      state.push(file);
+      state.unshift(file);
+      // Assuming you want to save the file to the database when it's added
+      // Implement your save logic here
+    },
+    deleteFile: (state, action) => {
+      const { id } = action.payload;
+      return state.filter(i => i.id !== id);
       // Assuming you want to save the file to the database when it's added
       // Implement your save logic here
     },
   },
 });
 
-export const { setFiles, addFile } = filesSlice.actions;
+export const { setFiles, addFile, deleteFile } = filesSlice.actions;
 export const fileReducer = filesSlice.reducer;
 
 // Thunk to upload files and save them to the DB
@@ -61,11 +67,21 @@ export const loadFiles = (password) => async (dispatch) => {
     
     // Update the Redux store
     dispatch(setFiles(filesWithUrls));
+    
+
+    
   } catch (error) {
     console.error('Error loading files:', error);
     // Handle error (e.g., show notification to the user)
   }
 };
+
+export const loadTypes = (files, dispatch) => {
+  files.map(file => {
+    dispatch(addType(file.fileType.split('.')[1]));
+    
+  })
+}
 
 
 // src/redux/passwordSlice.js
@@ -84,3 +100,27 @@ const passwordSlice = createSlice({
 
 export const { setPassword } = passwordSlice.actions;
 export const PasswordReducer = passwordSlice.reducer;
+
+
+const fileCategorySlice = createSlice({
+  name: 'fileCategory',
+  initialState: {
+    currentCategory: 'all',
+    allTypes: ['all']
+  },
+  reducers: {
+    setCategory: (state, action) => {
+      state.currentCategory = action.payload;
+    },
+    addType: (state, action) => {
+      if(state.allTypes.includes(action.payload)){
+        return state
+      }else{
+        state.allTypes.push(action.payload);
+      }
+    }
+  },
+});
+
+export const { setCategory, addType } = fileCategorySlice.actions;
+export const FileCategoryReducer = fileCategorySlice.reducer;

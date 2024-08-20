@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css';
 import { Route, Routes } from 'react-router-dom';
 import { ArrowArcRight, Eye, EyeClosed } from '@phosphor-icons/react';
-import { setFiles, setPassword, uploadFiles, loadFiles } from './Redux/ReducersAction';
+import { setFiles, setPassword, uploadFiles, loadFiles, loadTypes } from './Redux/ReducersAction';
 import Home from './Pages/Home/Home';
 import ColorPalette, { setColor } from './Components/color pallete/ColoePalette';
 import Out from './Components/Outlet/Outlet';
@@ -54,6 +54,11 @@ function App() {
       dispatch(loadFiles(password));
     }
   }, [password, dispatch]);
+  useEffect(() => {
+    if(files.length>0){
+      loadTypes(files, dispatch)
+    }
+  }, [files]);
 
   const handleToggleClick = () => {
     setShowPassword(!showPassword);

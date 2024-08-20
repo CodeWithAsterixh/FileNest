@@ -41,7 +41,27 @@ body{
 *::-webkit-scrollbar{
   display: none;
 }
+@keyframes showUploading{
+  0% {
+      opacity: 100%;
+      transform: scale(0.9);
+  }
+  25% {
+      opacity: 75%;
+      transform: scale(0.95);
 
+
+  }
+  75% {
+      opacity: 50%;
+      transform: scale(1);
+
+  }
+  100% {
+      opacity: 75%;
+      transform: scale(1.05);
+  }
+}
 
 @media (prefers-color-scheme: light) {
   :root {

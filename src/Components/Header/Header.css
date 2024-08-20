@@ -97,27 +97,7 @@
     animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-@keyframes showUploading{
-    0% {
-        opacity: 100%;
-        transform: scale(0.9);
-    }
-    25% {
-        opacity: 75%;
-        transform: scale(0.95);
 
-
-    }
-    75% {
-        opacity: 50%;
-        transform: scale(1);
-
-    }
-    100% {
-        opacity: 75%;
-        transform: scale(1.05);
-    }
-}
 
 /* Media query to hide text on smaller screens */
 @media (max-width: 600px) {
@@ -145,6 +125,7 @@
         border-radius: 50%;
         width: 25px;
         background-color: var(--primary200);
+        color: var(--secondary1000);
         height: 25px;
         transform: translateY(-40%) scale(1.1);
         border: 5px solid var(--secondary500);
