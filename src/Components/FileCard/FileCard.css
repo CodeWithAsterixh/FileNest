@@ -10,6 +10,7 @@
     flex-basis: 180px;
     max-width: 300px;
     position: relative;
+    z-index: 0;
   }
   .file-card .options{
     position: absolute;

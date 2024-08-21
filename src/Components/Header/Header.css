@@ -8,7 +8,7 @@
     justify-content: space-between;
     position: sticky;
     top: 0;
-    z-index: 3;
+    z-index: 1;
 }
 .Header .logo {
     width: fit-content;

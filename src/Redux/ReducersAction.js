@@ -43,9 +43,19 @@ export const uploadFiles = (files, password) => async (dispatch) => {
       url: URL.createObjectURL(blob),
     }));
     
-    // Update the Redux store
-    dispatch(setFiles(filesWithUrls));
-  } catch (error) {
+    const indexes = filesWithUrls.length - 1
+    let val = 0
+    const loading = setInterval(()=>{
+      if(val < filesWithUrls.length){
+        dispatch(addFile({file:filesWithUrls[val], password}));        
+        val++
+      }
+      
+    }, 100)
+    if(val >= filesWithUrls.length){
+      clearInterval(loading)
+    }
+    } catch (error) {
     console.error('Error uploading files:', error);
     // Handle error (e.g., show notification to the user)
   }
@@ -65,9 +75,18 @@ export const loadFiles = (password) => async (dispatch) => {
       url: URL.createObjectURL(fileBlobs[index]),
     }));
     
-    // Update the Redux store
-    dispatch(setFiles(filesWithUrls));
-    
+    const indexes = filesWithUrls.length - 1
+    let val = 0
+    const loading = setInterval(()=>{
+      if(val < filesWithUrls.length){
+        dispatch(addFile({file:filesWithUrls[val], password}));        
+        val++
+      }
+      
+    }, 100)
+    if(val >= filesWithUrls.length){
+      clearInterval(loading)
+    }
 
     
   } catch (error) {
@@ -79,6 +98,7 @@ export const loadFiles = (password) => async (dispatch) => {
 export const loadTypes = (files, dispatch) => {
   files.map(file => {
     dispatch(addType(file.fileType.split('.')[1]));
+    
     
   })
 }

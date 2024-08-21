@@ -2,13 +2,31 @@
 /* eslint-disable react/prop-types */
 import { useRef, useState, useEffect } from 'react';
 import './FileCard.css';
-import { FileImage, FilePdf, FileVideo, FileAudio, FileText, FilePpt, Download, FileArrowDown, Trash, FileDoc, FileXls, FileArchive, FileCode } from '@phosphor-icons/react';
+import { FileImage, FilePdf, FileVideo, FileAudio, FileText, FilePpt, Download, FileArrowDown, Trash, FileDoc, FileXls, FileArchive, FileCode, WarningCircle } from '@phosphor-icons/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { db } from '../../Functions/DB';
 import { deleteFile, setFiles } from '../../Redux/ReducersAction';
 import VideoOpener from './VideoOpener';
 import ImageOpener from './ImageOpener';
+import { toast } from 'react-toastify';
 
+
+
+
+ // Action to download a file
+ export const handleDownload = async (file, password) => {
+    try {
+        const fileBlob = await db.handleRetrieveFile(file.id, password);
+        if (fileBlob) {
+            const link = document.createElement('a');
+            link.href = fileBlob;
+            link.download = file.fileName;
+            link.click();
+        }
+    } catch (error) {
+        console.error('Failed to download file:', error);
+    }
+};
 const FileCard = ({ file, open }) => {
     const [imgError, setImgError] = useState(false);
     const [renameAble, setRenameAble] = useState(false);
@@ -23,7 +41,7 @@ const FileCard = ({ file, open }) => {
         const handleClickOutside = (event) => {
             if (nameBoxRef.current && !nameBoxRef.current.contains(event.target)) {
                 if (renameAble) {
-                    setRenameAble(false);
+                    handleBlur()
                 }
             }
         };
@@ -49,21 +67,37 @@ const FileCard = ({ file, open }) => {
         }
         
     }
-
-    function handleUpdateRename(name){
-        const modifiedDate = new Date().toISOString()
-        const update = files.map(lFile => {
-            let fileName = lFile.fileName
-            if(lFile.id == file.id){    
-                fileName = name+file.fileType
-            } 
-            return {...lFile, fileName, modifiedDate}
-
-        })
-        const updatedFile = update.find(f => f.id == file.id)
+    function handleUpdateRename(newName) {
+        const updatedFiles = files.map((lFile) => {
+            if (lFile.id === file.id) {
+                // Ensure the new name includes the correct file type
+                const fileName = `${newName}${file.fileType}`;
+                return {
+                    ...lFile,
+                    fileName,
+                    modifiedDate: new Date().toISOString(),
+                };
+            }
+            return lFile;
+        });
+    
+        const updatedFile = updatedFiles.find((f) => f.id === file.id);
+    
         db.updateFile(file.id, updatedFile, password)
-        dispatch(setFiles(update)) 
-        setRenameAble(false)
+            .then((result) => {
+                if (result.success) {
+                    if(result.type == 'warn'){
+                        toast.warn('Device doesnt allow browser renaming, file not renamed!', {
+                            position: "top",
+                            icon: <WarningCircle size={20} />
+                          })
+                    }
+                    dispatch(setFiles(updatedFiles)); // Update Redux or local state
+                    setRenameAble(false); // Hide rename UI
+                } else {
+                    console.error(result.message);
+                }
+            });
     }
 
     const handleBlur = () => {
@@ -148,7 +182,7 @@ const FileCard = ({ file, open }) => {
     };
 
     // Action to delete a file
-    const handleDelete = async () => {
+    const handleDelete = async (file) => {
         try {
             await db.deleteFile(file.id); // Assuming deleteFile is implemented in your DB class
             // Dispatch an action to remove the file from the Redux store
@@ -158,33 +192,19 @@ const FileCard = ({ file, open }) => {
         }
     };
 
-    // Action to download a file
-    const handleDownload = async () => {
-        try {
-            const fileBlob = await db.handleRetrieveFile(file.id, password);
-            if (fileBlob) {
-                const link = document.createElement('a');
-                link.href = fileBlob;
-                link.download = file.fileName;
-                link.click();
-            }
-        } catch (error) {
-            console.error('Failed to download file:', error);
-        }
-    };
+   
     const handleOpen = async ()=>{
-        const retrieved = await db.handleRetrieveFile(file.id, password)
         let displayContent;
         if(file.type.includes("video")){
             displayContent = {
                 shown: true,
-                content: <VideoOpener file={{...file, url:retrieved}} close={handleClose} />,
+                content: <VideoOpener password={password} file={file} close={handleClose} />,
                 id: file.id
             }
         }else if(file.type.includes("image")){
             displayContent = {
                 shown: true,
-                content: <ImageOpener file={{...file, url:retrieved}} close={handleClose} />,
+                content: <ImageOpener password={password} file={file} close={handleClose} />,
                 id: file.id
             }
         }
@@ -212,7 +232,7 @@ const FileCard = ({ file, open }) => {
                 <li className="option" id='open' onClick={handleOpen}>
                     <FileText size={20} weight='bold' color="var(--secondary100)" />
                 </li>
-                <li className="option" id='download' onClick={handleDownload}>
+                <li className="option" id='download' onClick={()=>handleDownload(file, password)}>
                     <FileArrowDown size={20} weight='bold' color="var(--secondary100)" />
                 </li>
                 <li className="option" id='delete file' onClick={handleDelete}>

@@ -40,7 +40,6 @@ function App() {
     if (savedPassword) {
       if (savedPassword === 'default') {
         dispatch(setPassword('default'));
-        console.log('default');
       } else {
         setInputPassword(true);
       }

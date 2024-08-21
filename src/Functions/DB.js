@@ -53,7 +53,6 @@ class DB {
         blob: encryptedFile, // The encrypted file data
       };
       
-      console.log(dataToSave)
       // Store the data object in IndexedDB
       await store.put(dataToSave);
       
@@ -64,7 +63,7 @@ class DB {
       return fileId;
     } catch (error) {
       console.error('Error saving file:', error);
-      throw error;
+      // throw error;
     }
   }
 
@@ -121,35 +120,29 @@ class DB {
 
   decryptData(encryptedData, password) {
     if (!encryptedData || !encryptedData.blob.ciphertext || !encryptedData.blob.salt || !encryptedData.blob.iv) {
-      throw new Error('Invalid encrypted data');
+        throw new Error('Invalid encrypted data');
     }
 
     try {
-      const { ciphertext, salt, iv } = encryptedData.blob;
-      
-      const decodedCiphertext = CryptoJS.enc.Base64.parse(ciphertext);
-      const decodedSalt = CryptoJS.enc.Base64.parse(salt);
-      const decodedIv = CryptoJS.enc.Base64.parse(iv);
-      const key = CryptoJS.PBKDF2(password, decodedSalt, { keySize: 256 / 32, iterations: 1000 });
-      const decrypted = CryptoJS.AES.decrypt({ ciphertext: decodedCiphertext }, key, { iv: decodedIv });
-      console.log(decrypted);
-      
+        const { ciphertext, salt, iv } = encryptedData.blob;
+        const decodedCiphertext = CryptoJS.enc.Base64.parse(ciphertext);
+        const decodedSalt = CryptoJS.enc.Base64.parse(salt);
+        const decodedIv = CryptoJS.enc.Base64.parse(iv);
+        const key = CryptoJS.PBKDF2(password, decodedSalt, { keySize: 256 / 32, iterations: 1000 });
+        const decrypted = CryptoJS.AES.decrypt({ ciphertext: decodedCiphertext }, key, { iv: decodedIv });
 
-      try {
-        // Try to convert to UTF-8 string
-        const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);        
-        // If the conversion succeeds, assume it's text data
-          return JSON.parse(decryptedText);
-    } catch (e) {
-        // If the conversion fails, assume it's binary data
-        console.warn('Decrypted data is not valid UTF-8 text, treating as binary');
-        return decrypted;
-    }
+        try {
+            const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);        
+            return JSON.parse(decryptedText);
+        } catch (e) {
+            // console.warn('Decrypted data is not valid UTF-8 text, treating as binary');
+            return decrypted;
+        }
     } catch (error) {
-      console.error('Error decrypting data:', error);
-      throw new Error('Decryption error');
+        console.error('Error decrypting data:', error);
+        throw new Error('Decryption error');
     }
-  }
+}
 
   async getFileBlob(id, password) {
     const db = await this.dbPromise;
@@ -157,7 +150,7 @@ class DB {
     if (encryptedData) {
         const fileData = this.decryptData(encryptedData, password);
 
-        // Check if fileData is binary
+        // Check if fileData is binary (has words)
         if (fileData.words) {
             // Convert the decrypted WordArray to a Uint8Array
             const byteArray = new Uint8Array(fileData.sigBytes);
@@ -172,6 +165,7 @@ class DB {
     }
     return null;
 }
+
 
   async handleRetrieveFile(id, password) {
     try {
@@ -194,7 +188,6 @@ class DB {
     const db = await this.dbPromise;
     const encryptedFiles = await db.getAll('files');    
     return Promise.all(encryptedFiles.map(async (encryptedData) => {
-      console.log(encryptedData);
       
       const fileData = this.decryptData(encryptedData, password);
       return { ...encryptedData, fileData: {...fileData}, id: encryptedData.id, fileType: encryptedData.fileType };
@@ -214,14 +207,40 @@ class DB {
       return {message: 'error deleting file', return: error, success: false}
     }
   }
-  async updateFile(id, update, password) {
-    const deleted = await this.deleteFile(id).then(mes => mes)    
-    this.saveFile(update, password)
-
-    if(deleted.success){
-      return true
+  async findFile(id, password){
+    const fileComplete = await this.getAllFiles(password)
+    if(fileComplete.find(file => file.id == id)){
+      return fileComplete.find(file => file.id == id)
+    }else{
+      return null
     }
   }
+  async updateFile(id, update, password) {
+    // Fetch the original file
+    const file = await this.findFile(id, password);
+    
+    if (!file) {
+        return { success: false, message: "File not found." };
+    }
+
+    // Update fileName while preserving other properties
+    const { fileName } = update;
+    const updatedFile = {
+        ...file,
+        fileName,          // Update the name
+        modifiedDate: new Date().toISOString(), // Update the modified date
+    };
+
+    // Save the updated file with the same ID
+    // await this.saveFile(updatedFile, password);
+
+    
+
+    // Optionally, you can remove the old file record by its ID here if needed
+
+    return { success: true, file: updatedFile, type: 'warn' };
+}
+
 
   async clearData() {
     const db = await this.dbPromise;

@@ -1,20 +1,43 @@
 .Home{
     width: 100%;
     height: fit-content;
-    z-index: 1;
+    z-index: 0;
     position: relative;
 }
 .Home .filesContainer{
     width: calc(100% - 40px);
     padding: 20px;
+    padding-bottom: 100px;
     height: fit-content;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     align-content: flex-start;
     flex-wrap: wrap;
     gap: 20px;
+    z-index: 5;
 }
+
+.Home .load{
+    width: 100vw;
+    height: 50vh;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.Home .load::before{
+    content: '';
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--secondary1000);
+    border-radius: 50% 0 50% 0;
+    animation: load 2s linear infinite;
+}
+
 
 .Home .nofile{
     width: 100vw;

@@ -21,15 +21,15 @@ function Home() {
     content: null,
     id: null
 })
-  useEffect(() => {
-    console.table(files)
-  }, [files])
-  useEffect(() => {
-    console.table(types)
-  }, [types])
+  // useEffect(() => {
+  //   console.table(files)
+  // }, [files])
+  // useEffect(() => {
+  //   console.table(types)
+  // }, [types])
   useEffect(() => {
     if(files){
-      console.log(category);
+      // console.log(category);
       
       let categorizedFiles;
       switch (category) {
@@ -88,11 +88,11 @@ function Home() {
           </>
         :<div className="filesContainer">
             {/* Check if files are loaded and map them to FileCard components */}
-            {files && categorized.length > 0 ? (
+            {files &&files.length>0 ? categorized.length > 0 ? (
               categorized.map((file) => (
                 <FileCard open={{fileOpener, setFileOpener}} key={file.id} file={file} />
               ))
-            ) : (
+            ) :<i className='load'></i> : (
               <div className="nofile">
               <p>No files available</p>
               <i onClick={handleButtonClick} >

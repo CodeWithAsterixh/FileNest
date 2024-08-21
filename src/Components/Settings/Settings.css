@@ -11,6 +11,8 @@
     width: fit-content;
     height: fit-content;
     border-radius: 50%;
+    z-index: 0;
+    box-shadow: 0px 2px 10px var(--secondary100);
 }
 .Settings .toggle {
     background-color: var(--secondary1000);
@@ -106,6 +108,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0px 2px 10px var(--secondary500);
+
 }
 .Settings .actions li > *{
     zoom: 80%;
