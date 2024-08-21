@@ -12,6 +12,7 @@ import Out from './Components/Outlet/Outlet';
 import Modal from './Components/Modal/Modal';
 import './App.css'
 import { uploadFilesSave } from './Functions/DB';
+import PasswordInput from './Components/Settings/InputPassword';
 
 function App() {
   const files = useSelector((state) => state.files);
@@ -27,11 +28,11 @@ function App() {
   const defCol = [
     { name: 'primary', mainColor: "#ADD8E6", shades: [] }, // Light Blue
     { name: 'secondary', mainColor: "#4B0082", shades: [] }, // Indigo (Contrasts with Light Blue)
-    { name: 'color-accent-Gold', mainColor: "#FFD700", shades: [] }, // Gold
+    { name: 'accent-Gold', mainColor: "#FFD700", shades: [] }, // Gold
     { name: 'baseWhite', mainColor: "#F5F5F5", shades: [] }, // Light Neutral
     { name: 'baseBlack', mainColor: "#333333", shades: [] }, // Dark Neutral
-    { name: 'color-error', mainColor: "#FF6F61", shades: [] }, // Red for Errors
-    { name: 'color-success', mainColor: "#28A745", shades: [] }, // Green for Success
+    { name: 'error', mainColor: "#FF6F61", shades: [] }, // Red for Errors
+    { name: 'success', mainColor: "#28A745", shades: [] }, // Green for Success
   ];
 
   useEffect(() => {
@@ -100,24 +101,14 @@ function App() {
             skip <ArrowArcRight weight='regular' size={20} />
           </span>
           <div className="createPassword">
-            <div className="input">
-              <input type={inputType} placeholder="Enter Password" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
-              <button className={showPassword ? 'show' : ''} onClick={handleToggleClick}>
-                {showPassword ? <Eye color='var(--secondary100)' weight='bold' size={20} /> : <EyeClosed color='var(--secondary1000)' weight='bold' size={20} />}
-              </button>
-            </div>
+            <PasswordInput type={inputType} placeholder="Enter Password" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
             <button onClick={() => handleSubmit()} className='enter'>Create</button>
           </div>
         </Modal>
       ) : inputPassword ? (
         <Modal defaultCancel={false}>
           <div className="inputPassword">
-            <div className="input">
-              <input type={inputType} placeholder="Enter Password" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
-              <button className={showPassword ? 'show' : ''} onClick={handleToggleClick}>
-                {showPassword ? <Eye color='var(--secondary100)' weight='bold' size={20} /> : <EyeClosed color='var(--secondary1000)' weight='bold' size={20} />}
-              </button>
-            </div>
+            <PasswordInput type={inputType} placeholder="Enter Password" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
             <button onClick={() => handleSubmit()} className='enter'>Enter</button>
           </div>
         </Modal>

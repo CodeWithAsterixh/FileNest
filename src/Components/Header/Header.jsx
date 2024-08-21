@@ -35,16 +35,16 @@ function Header() {
       </div>
 
       <nav>
-        <a onClick={()=>handleChangeTypeList('All')} className={category=="all"&&'active'}>All</a>
-        <a onClick={()=>handleChangeTypeList('Videos')} className={category=="videos"&&'active'}>
+        <a onClick={()=>handleChangeTypeList('All')} className={category=="all"?'active':null}>All</a>
+        <a onClick={()=>handleChangeTypeList('Videos')} className={category=="videos"?'active':null}>
           <VideoCamera size={20} color="var(--secondary1000)" weight='duotone' />
           <span>Videos</span>
         </a>
-        <a onClick={()=>handleChangeTypeList('others')} className={category=="others"&&'active'}>
+        <a onClick={()=>handleChangeTypeList('others')} className={category=="others"?'active':null}>
           <FileText size={20} color="var(--secondary1000)" weight='duotone' />
           <span>Documents</span>
         </a>
-        <a onClick={()=>handleChangeTypeList('Photos')} className={category=="photos"&&'active'}>
+        <a onClick={()=>handleChangeTypeList('Photos')} className={category=="photos"?'active':null}>
           <Image size={20} color="var(--secondary1000)" weight='duotone' />
           <span>Photos</span>
         </a>

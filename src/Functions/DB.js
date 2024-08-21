@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { openDB } from 'idb';
 import CryptoJS from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,18 +24,43 @@ class DB {
 
   async saveFile(file, password) {
     try {
-      const encryptedFile = await this.encryptData(file, password);
+      // Encrypt the file data (content)
+      const encryptedFile = await this.encryptData(file.blob || file, password);
+      
+      // Get the IndexedDB instance
       const db = await this.dbPromise;
+      
+      // Start a read/write transaction in the 'files' object store
       const tx = db.transaction('files', 'readwrite');
       const store = tx.objectStore('files');
+      
+      // Generate a unique ID for the file if not already provided
       const fileId = file.id || this.generateId();
+      
+      // Prepare the data object to save, including all metadata and the encrypted Blob
       const dataToSave = {
         id: fileId,
+        fileName: file.fileName,
         fileType: file.fileType,
-        blob: encryptedFile,
+        type: file.type,
+        fileSize: file.fileSize,
+        uploadDate: file.uploadDate,
+        modifiedDate: file.modifiedDate,
+        filePath: fileId, // Store the ID as a reference, similar to Redux state
+        preview: file.preview,
+        tags: file.tags || [],
+        description: file.description || '',
+        blob: encryptedFile, // The encrypted file data
       };
+      
+      console.log(dataToSave)
+      // Store the data object in IndexedDB
       await store.put(dataToSave);
+      
+      // Complete the transaction
       await tx.done;
+      
+      // Return the file ID for reference
       return fileId;
     } catch (error) {
       console.error('Error saving file:', error);
@@ -100,18 +126,25 @@ class DB {
 
     try {
       const { ciphertext, salt, iv } = encryptedData.blob;
+      
       const decodedCiphertext = CryptoJS.enc.Base64.parse(ciphertext);
       const decodedSalt = CryptoJS.enc.Base64.parse(salt);
       const decodedIv = CryptoJS.enc.Base64.parse(iv);
       const key = CryptoJS.PBKDF2(password, decodedSalt, { keySize: 256 / 32, iterations: 1000 });
       const decrypted = CryptoJS.AES.decrypt({ ciphertext: decodedCiphertext }, key, { iv: decodedIv });
-      const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
+      console.log(decrypted);
+      
 
       try {
-        return JSON.parse(decryptedData);
-      } catch {
-        return decryptedData;
-      }
+        // Try to convert to UTF-8 string
+        const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);        
+        // If the conversion succeeds, assume it's text data
+          return JSON.parse(decryptedText);
+    } catch (e) {
+        // If the conversion fails, assume it's binary data
+        console.warn('Decrypted data is not valid UTF-8 text, treating as binary');
+        return decrypted;
+    }
     } catch (error) {
       console.error('Error decrypting data:', error);
       throw new Error('Decryption error');
@@ -122,19 +155,30 @@ class DB {
     const db = await this.dbPromise;
     const encryptedData = await db.get('files', id);
     if (encryptedData) {
-      const fileData = this.decryptData(encryptedData, password);
-      return new Blob([fileData], { type: encryptedData.fileType });
+        const fileData = this.decryptData(encryptedData, password);
+
+        // Check if fileData is binary
+        if (fileData.words) {
+            // Convert the decrypted WordArray to a Uint8Array
+            const byteArray = new Uint8Array(fileData.sigBytes);
+            for (let i = 0; i < fileData.sigBytes; i++) {
+                byteArray[i] = (fileData.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+            }
+            return new Blob([byteArray], { type: encryptedData.fileType });
+        } else {
+            // If text, return it as a Blob directly
+            return new Blob([fileData], { type: encryptedData.fileType });
+        }
     }
     return null;
-  }
+}
 
   async handleRetrieveFile(id, password) {
     try {
       const fileBlob = await this.getFileBlob(id, password);
       if (fileBlob) {
         const fileURL = URL.createObjectURL(fileBlob);
-        console.log(fileURL);
-        
+                
         return fileURL;
       } else {
         console.log('File not found');
@@ -148,20 +192,35 @@ class DB {
 
   async getAllFiles(password) {
     const db = await this.dbPromise;
-    const encryptedFiles = await db.getAll('files');
+    const encryptedFiles = await db.getAll('files');    
     return Promise.all(encryptedFiles.map(async (encryptedData) => {
+      console.log(encryptedData);
+      
       const fileData = this.decryptData(encryptedData, password);
-      return { ...fileData, id: encryptedData.id, fileType: encryptedData.fileType };
+      return { ...encryptedData, fileData: {...fileData}, id: encryptedData.id, fileType: encryptedData.fileType };
     }));
   }
 
   async deleteFile(id) {
-    const db = await this.dbPromise;
-    const tx = db.transaction('files', 'readwrite');
-    const store = tx.objectStore('files');
-    await store.delete(id);
-    await tx.done;
-    console.log(`File with id ${id} deleted`);
+    try {
+      const db = await this.dbPromise;
+      const tx = db.transaction('files', 'readwrite');
+      const store = tx.objectStore('files');
+      await store.delete(id);
+      await tx.done;
+      return {message: 'success deleting file', return: "success", success: true}
+
+    } catch (error) {
+      return {message: 'error deleting file', return: error, success: false}
+    }
+  }
+  async updateFile(id, update, password) {
+    const deleted = await this.deleteFile(id).then(mes => mes)    
+    this.saveFile(update, password)
+
+    if(deleted.success){
+      return true
+    }
   }
 
   async clearData() {

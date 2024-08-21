@@ -2,7 +2,13 @@
   max-width: 100vw;
   margin: 0;
   padding: 0;
+  height: 100vh;
+  z-index: -5;
   text-align: center;
+  background-color: var(--primary100);
+  background: linear-gradient(#000000a6, #000000a6),  url('./assets/images/imageBg1.jpg') no-repeat;
+  background-size: cover;
+  background-position: center center;
 }
 .Modal .skip{
   width: fit-content;

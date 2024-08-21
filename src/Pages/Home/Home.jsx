@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FileCard from '../../Components/FileCard/FileCard';
 import './Home.css';
-import { CloudArrowUp, FileDotted, FilePlus } from '@phosphor-icons/react';
+import { CloudArrowUp, FileDotted, FilePlus, FileSearch, Funnel, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useFileUpload } from '../../Functions/useFileUpload';
 
 function Home() {
@@ -15,32 +15,30 @@ function Home() {
   const { uploadProcess, handleFileChange } = useFileUpload(password);
   const [categorized, setCategorized] = useState([])
   const fileInputRef = useRef(null);
+
+  const [fileOpener, setFileOpener] = useState({
+    shown: false,
+    content: null,
+    id: null
+})
   useEffect(() => {
-    console.log(files)
+    console.table(files)
   }, [files])
   useEffect(() => {
-    console.log(types)
+    console.table(types)
   }, [types])
   useEffect(() => {
     if(files){
-      if(category !== 'others'){
-        const categorizedFiles = files.filter(file => !file.type.includes(category))
-        setCategorized(categorizedFiles)
-      }else{
-        const categorizedFiles = files.filter(file => file.type.includes('image') || file.type.includes('video'))
-        setCategorized(categorizedFiles)
-      }
-
       let categorizedFiles;
       switch (category) {
         case 'videos':
-          categorizedFiles = files.filter(file => file.type.includes('video'))
+          categorizedFiles = files.filter(file => file.fileType.includes('video'))
           break;
         case 'photos':
-          categorizedFiles = files.filter(file => file.type.includes('image'))
+          categorizedFiles = files.filter(file => file.fileType.includes('image'))
           break;
         case 'others':
-          categorizedFiles = files.filter(file => !file.type.includes('image') && !file.type.includes('video'))
+          categorizedFiles = files.filter(file => !file.fileType.includes('image') && !file.fileType.includes('video'))
           break;
       
         default:
@@ -60,7 +58,16 @@ function Home() {
 
   return (
     <div className="Home">
-      
+      <div className="controls">
+        <label htmlFor="search" className="search">
+          <div className="searchInput">
+              <input type="text"/>
+              <button><X /></button>
+          </div>
+          <button><MagnifyingGlass /></button>
+        </label>
+        <button onClick={()=> {return}}>Filters <Funnel color="var(--secondary100)" size={20} /></button>
+      </div>
       <input
             type="file"
             onChange={handleFileChange}
@@ -78,19 +85,22 @@ function Home() {
             </div>
           </>
         :<div className="filesContainer">
-        {/* Check if files are loaded and map them to FileCard components */}
-        {files && categorized.length > 0 ? (
-          categorized.map((file) => (
-            <FileCard key={file.id} file={file} />
-          ))
-        ) : (
-          <div className="nofile">
-          <p>No files available</p>
-          <i onClick={handleButtonClick} >
-            <FilePlus size={100} />
-          </i>
-          </div>// Display a message if no files are present
-        )}
+            {/* Check if files are loaded and map them to FileCard components */}
+            {files && categorized.length > 0 ? (
+              categorized.map((file) => (
+                <FileCard open={{fileOpener, setFileOpener}} key={file.id} file={file} />
+              ))
+            ) : (
+              <div className="nofile">
+              <p>No files available</p>
+              <i onClick={handleButtonClick} >
+                <FilePlus color='var(--secondary100)' size={100} />
+              </i>
+              </div>// Display a message if no files are present
+            )}
+            {
+              fileOpener.shown&&fileOpener.content
+            }
       </div>
       }
     </div>

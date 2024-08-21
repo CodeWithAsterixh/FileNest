@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // src/hooks/useFileUpload.js
 
 import { useState } from 'react';
@@ -9,42 +10,55 @@ import { uploadFilesSave } from './DB';
 export function useFileUpload(password) {
   const dispatch = useDispatch();
   const [uploadProcess, setUploadProcess] = useState({ process: 0, size: 0 });
-    
+
   const handleFileChange = async (event) => {
     const files = event.target.files;
     if (files.length === 0) return;
 
     setUploadProcess({ process: 1, size: files.length });
 
-    const fileArray = await Promise.all(Array.from(files).map(async (file, index) => {
-      const { name, size, type } = file;
-      const fileSize = (size / (1024 * 1024)).toFixed(2) + ' MB'; // Convert size to MB
-      const fileExtension = name.split('.').pop().toLowerCase(); // Get the file extension
-      const uploadDate = new Date().toISOString();
-      const filePath = URL.createObjectURL(file); // Use a temporary URL for the file
-      const preview = await generatePreview(fileExtension, file); // Generate a preview URL or icon
+    const fileArray = await Promise.all(
+      Array.from(files).map(async (file, index) => {
+        const { name, size, type } = file;
+        const fileSize = (size / (1024 * 1024)).toFixed(2) + ' MB'; // Convert size to MB
+        const fileExtension = name.split('.').pop().toLowerCase(); // Get the file extension
+        const uploadDate = new Date().toISOString();
+        const fileId =  uniqueId()
+        const preview = await generatePreview(fileExtension, file); // Generate a preview URL for images
 
-      setUploadProcess({ process: 2, size: index + 1 });
+        await uploadFilesSave({ blob: file, fileName: name,
+          fileType: `.${fileExtension}`,
+          type,
+          fileSize,
+          uploadDate,
+          modifiedDate: uploadDate,
+          filePath: fileId, // Store the Blob as the file path
+          preview,
+          tags: [],
+          description: '',
+          id: fileId }, password);
+        setUploadProcess({ process: 2, size: index + 1 });
+          return {
+          fileName: name,
+          fileType: `.${fileExtension}`,
+          type,
+          fileSize,
+          uploadDate,
+          modifiedDate: uploadDate,
+          filePath: fileId, // Store the Blob as the file path
+          preview,
+          tags: [],
+          description: '',
+          id: fileId,
+          };
 
-      return {
-        fileName: name,
-        fileType: `.${fileExtension}`,
-        type,
-        fileSize,
-        uploadDate,
-        filePath,
-        preview,
-        tags: [],
-        description: '',
-        id: uniqueId(),
-      };
-    }));
+      })
+    );
 
     setUploadProcess({ process: 3, size: fileArray.length });
-    fileArray.forEach(async file => {
+
+    fileArray.forEach(async (file) => {
       dispatch(addFile({ file, password }));
-      // Encrypt and save the file in the database
-      await uploadFilesSave(file, password);
     });
   };
 
@@ -54,13 +68,13 @@ export function useFileUpload(password) {
 
       reader.onload = () => {
         if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
-          resolve(reader.result);
+          resolve(reader.result); // Image file - return dataURL
         } else if (['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(fileExtension)) {
-          resolve('/path/to/video-icon.png');
+          resolve('/path/to/video-icon.png'); // Use a default video icon
         } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(fileExtension)) {
-          resolve('/path/to/document-icon.png');
+          resolve('/path/to/document-icon.png'); // Use a default document icon
         } else {
-          resolve('/path/to/file-icon.png');
+          resolve('/path/to/file-icon.png'); // Use a default file icon
         }
       };
 
@@ -68,8 +82,19 @@ export function useFileUpload(password) {
         reject(new Error('Error reading file'));
       };
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Read the file as a data URL
     });
+  };
+
+ const dataURLToBlob = (dataURL) => {
+    const byteString = atob(dataURL.split(',')[1]);
+    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    const buffer = new ArrayBuffer(byteString.length);
+    const view = new Uint8Array(buffer);
+    for (let i = 0; i < byteString.length; i++) {
+      view[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([buffer], { type: mimeString });
   };
 
   return { uploadProcess, handleFileChange };

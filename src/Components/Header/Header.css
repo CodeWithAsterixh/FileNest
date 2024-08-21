@@ -2,7 +2,7 @@
     width: calc(100% - 40px);
     padding: 10px 20px;
     height: fit-content;
-    background-color: var(--secondary900);
+    background-color: var(--baseWhite100);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,10 +30,10 @@
     font-size: var(--h5);
 }
 .Header .logo i.file {
-    color: var(--primary1000);
+    color: var(--secondary1000);
 }
 .Header .logo i.nest {
-    color: var(--primary500);
+    color: var(--secondary500);
 }
 
 .Header nav{
@@ -117,31 +117,31 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        background-color: var(--secondary500);
+        background-color: var(--baseWhite100);
         padding: 10px;
     }
     .Header nav a {
         padding: 10px;
         border-radius: 50%;
         width: 25px;
-        background-color: var(--primary200);
+        background-color: var(--secondary200);
         color: var(--secondary1000);
         height: 25px;
         transform: translateY(-40%) scale(1.1);
-        border: 5px solid var(--secondary500);
+        border: 5px solid var(--baseWhite100);
 
     }
     .Header nav a span {
         display: none;
     }
     .Header nav a.active{
-        background-color: var(--primary200);
+        background-color: var(--secondary200);
         color: var(--secondary1000);
         -webkit-transition-duration: 200ms;
         transform: translateY(-20%) scale(1.1);
     }
     .Header nav a:not(.active):not(.add):not(.uploading):hover{
-        background-color: var(--secondary100);
+        background-color: var(--secondary200);
         color: var(--secondary1000);
         -webkit-transition-duration: 200ms;
         transform: translateY(-20%) scale(1.1);
