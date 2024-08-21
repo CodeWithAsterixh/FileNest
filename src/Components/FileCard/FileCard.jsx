@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useRef, useState, useEffect } from 'react';
 import './FileCard.css';
-import { FileImage, FilePdf, FileVideo, FileAudio, FileText, FilePpt, Download, FileArrowDown, Trash, FileDoc } from '@phosphor-icons/react';
+import { FileImage, FilePdf, FileVideo, FileAudio, FileText, FilePpt, Download, FileArrowDown, Trash, FileDoc, FileXls, FileArchive, FileCode } from '@phosphor-icons/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { db } from '../../Functions/DB';
 import { deleteFile, setFiles } from '../../Redux/ReducersAction';
@@ -77,28 +77,71 @@ const FileCard = ({ file, open }) => {
 
     const getFileIcon = (fileType, size=32) => {
         switch (fileType) {
+            // Image files
             case '.jpg':
             case '.jpeg':
             case '.png':
             case '.gif':
+            case '.bmp':
+            case '.tiff':
+            case '.svg':
                 return <FileImage color="var(--baseBlack1000)" weight='duotone' size={size} />;
+        
+            // Document files
             case '.pdf':
                 return <FilePdf color="var(--baseBlack1000)" weight='duotone' size={size} />;
+            case '.doc':
+            case '.docx':
+            case '.odt':
+                return <FileDoc color="var(--baseBlack1000)" weight='duotone' size={size} />;
+            case '.ppt':
+            case '.pptx':
+            case '.odp':
+                return <FilePpt color="var(--baseBlack1000)" weight='duotone' size={size} />;
+            case '.xls':
+            case '.xlsx':
+            case '.ods':
+                return <FileXls color="var(--baseBlack1000)" weight='duotone' size={size} />;
+            case '.txt':
+            case '.rtf':
+                return <FileText color="var(--baseBlack1000)" weight='duotone' size={size} />;
+        
+            // Video files
             case '.mp4':
             case '.mov':
             case '.avi':
+            case '.mkv':
+            case '.flv':
+            case '.wmv':
                 return <FileVideo color="var(--baseBlack1000)" weight='duotone' size={size} />;
+        
+            // Audio files
             case '.mp3':
             case '.wav':
+            case '.ogg':
+            case '.flac':
+            case '.aac':
                 return <FileAudio color="var(--baseBlack1000)" weight='duotone' size={size} />;
-            case '.ppt':
-            case '.pptx':
-                return <FilePpt color="var(--baseBlack1000)" weight='duotone' size={size} />;
-            case '.txt':
-                return <FileText color="var(--baseBlack1000)" weight='duotone' size={size} />;
-            case '.doc':
-            case '.docx':
-                return <FileDoc color="var(--baseBlack1000)" weight='duotone' size={size} />;
+        
+            // Archive files
+            case '.zip':
+            case '.rar':
+            case '.7z':
+            case '.tar':
+            case '.gz':
+                return <FileArchive color="var(--baseBlack1000)" weight='duotone' size={size} />;
+        
+            // Code files
+            case '.html':
+            case '.css':
+            case '.js':
+            case '.json':
+            case '.xml':
+            case '.md':
+            case '.sql':
+                return <FileCode color="var(--baseBlack1000)" weight='duotone' size={size} />;
+        
+            // Default to text file icon if file type is unknown
             default:
                 return <FileText color="var(--baseBlack1000)" weight='duotone' size={size} />;
         }

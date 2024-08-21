@@ -29,16 +29,18 @@ function Home() {
   }, [types])
   useEffect(() => {
     if(files){
+      console.log(category);
+      
       let categorizedFiles;
       switch (category) {
         case 'videos':
-          categorizedFiles = files.filter(file => file.fileType.includes('video'))
+          categorizedFiles = files.filter(file => file.type.includes('video'))
           break;
         case 'photos':
-          categorizedFiles = files.filter(file => file.fileType.includes('image'))
+          categorizedFiles = files.filter(file => file.type.includes('image'))
           break;
         case 'others':
-          categorizedFiles = files.filter(file => !file.fileType.includes('image') && !file.fileType.includes('video'))
+          categorizedFiles = files.filter(file => !file.type.includes('image') && !file.type.includes('video'))
           break;
       
         default:

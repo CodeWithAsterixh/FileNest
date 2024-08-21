@@ -64,10 +64,22 @@ function Settings() {
                 }
             </i>
             <ul className="actions">
-                <li><Archive size={25} color="var(--secondary100)"/></li>
-                <li onClick={()=>toggleShowSettingsOpen(<PasswordFixSettings cancel={()=>toggleShowSettingsOpen(null, 'passwordFix')} />, 'passwordFix')}><Lock size={25} color="var(--secondary100)"/></li>
-                <li><User size={25} color="var(--secondary100)"/></li>
-                <li><GearFine size={25} color="var(--secondary100)"/></li>
+                <li>
+                    <i className="title">Storage</i>
+                    <Archive size={25} color="var(--secondary100)"/>
+                </li>
+                <li onClick={()=>toggleShowSettingsOpen(<PasswordFixSettings cancel={()=>toggleShowSettingsOpen(null, 'passwordFix')} />, 'passwordFix')}>
+                    <i className="title">Password manager</i>
+                    <Lock size={25} color="var(--secondary100)"/>
+                </li>
+                <li>
+                    <i className="title">User</i>
+                    <User size={25} color="var(--secondary100)"/>
+                </li>
+                <li>
+                    <i className="title">Other Settings</i>
+                    <GearFine size={25} color="var(--secondary100)"/>
+                </li>
             </ul>
         </div>
 
