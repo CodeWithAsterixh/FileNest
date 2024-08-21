@@ -88,7 +88,7 @@ function Home() {
           </>
         :<div className="filesContainer">
             {/* Check if files are loaded and map them to FileCard components */}
-            {files &&files.length>0 ? categorized.length > 0 ? (
+            {files ? categorized.length > 0 ? (
               categorized.map((file) => (
                 <FileCard open={{fileOpener, setFileOpener}} key={file.id} file={file} />
               ))
