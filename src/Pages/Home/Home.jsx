@@ -53,21 +53,26 @@ function Home() {
     }
     
     if(search&&search.trim() !== ''){
-      let searchFilter = files.filter(item => item.fileName.includes(search))
+      const all = files.map(file => {
+        return {...file, fileNameLower: file.fileName.toLowerCase()}
+      })
+      let searchFilter =all.filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
+
+      
 
       switch (category) {
         case 'videos':
-          searchFilter = files.filter(file => file.type.includes('video')).filter(item => item.fileName.includes(search))
+          searchFilter =all.filter(file => file.type.includes('video')).filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
           break;
         case 'photos':
-          searchFilter = files.filter(file => file.type.includes('image')).filter(item => item.fileName.includes(search))
+          searchFilter =all.filter(file => file.type.includes('image')).filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
           break;
         case 'others':
-          searchFilter = files.filter(file => !file.type.includes('image') && !file.type.includes('video')).filter(item => item.fileName.includes(search))
+          searchFilter =all.filter(file => !file.type.includes('image') && !file.type.includes('video')).filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
           break;
       
         default:
-          searchFilter = files.filter(item => item.fileName.includes(search))
+          searchFilter =all.filter(item => item.fileNameLower.includes(search))
           break;
       }
       setCategorized(searchFilter)
