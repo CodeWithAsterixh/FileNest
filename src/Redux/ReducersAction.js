@@ -24,10 +24,15 @@ const filesSlice = createSlice({
       // Assuming you want to save the file to the database when it's added
       // Implement your save logic here
     },
+    clearFiles: (state, action) => {
+      db.clearData()
+      return action.payload
+    }
   },
 });
-export const { setFiles, addFile, deleteFile } = filesSlice.actions;
+export const { setFiles, addFile, deleteFile, clearFiles } = filesSlice.actions;
 export const fileReducer = filesSlice.reducer;
+
 
 
 const storageSlice = createSlice({
@@ -62,12 +67,29 @@ const storageSlice = createSlice({
     },
     loadCategories: (state, action) => {
       state.categorized = action.payload;
-    }
+    },
+    clearStorage: (state, action) => {
+      state = {
+        maxStorage: {
+          value: 1024,
+          percent: 100 // Total storage is always 100%
+        },
+        usedStorage: {
+          value: 0,
+          percent: 0
+        },
+        remainingStorage: {
+          value: 1024,
+          percent: 100
+        },
+        categorized: null
+      }
+    },
     
   },
 });
 
-export const { setStorage, loadCategories } = storageSlice.actions;
+export const { setStorage, loadCategories, clearStorage } = storageSlice.actions;
 export const storageReducer = storageSlice.reducer;
 
 // Thunk to upload files and save them to the DB
@@ -86,12 +108,7 @@ export const uploadFiles = (files, password) => async (dispatch) => {
     }));
     
     const indexes = filesWithUrls.length - 1
-    let used = 0
-    filesWithUrls.map(file => {
-      const fileSize = Number(file.fileSize.toLowerCase().split(" mb")[0])      
-      used += fileSize
-    })
-    dispatch(setStorage(used))
+    
     let val = 0
     const loading = setInterval(()=>{
       if(val < filesWithUrls.length){
@@ -125,12 +142,6 @@ export const loadFiles = (password) => async (dispatch) => {
     }));
     
     const indexes = filesWithUrls.length - 1
-    let used = 0
-    filesWithUrls.map(file => {
-      const fileSize = Number(file.fileSize.toLowerCase().split(" mb")[0])      
-      used += fileSize
-    })
-    dispatch(setStorage(used))
     
     let val = 0
     const loading = setInterval(async ()=>{
@@ -151,11 +162,12 @@ export const loadFiles = (password) => async (dispatch) => {
   }
 };
 
+
+
+
 export const loadTypes = async (files, dispatch) => {
   files.map(file => {
     dispatch(addType(file.fileType.split('.')[1]));
-    
-    
   })
 }
 

@@ -6,7 +6,7 @@ import './SettingsContent.css'
 import { useEffect, useRef } from 'react'
 import { Chart, registerables } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadCategories } from '../../Redux/ReducersAction';
+import { clearFiles, loadCategories, setFiles } from '../../Redux/ReducersAction';
 import { db } from '../../Functions/DB';
 Chart.register(...registerables);
 
@@ -48,6 +48,8 @@ export async function categorizeFiles(files, totalStorage) {
     // Convert categories object to array and filter out categories with zero size
     return Object.values(categories);
   }
+
+  
   
 
 function Storage({cancel}) {
@@ -143,7 +145,7 @@ function Storage({cancel}) {
             myChart.destroy();
           };
         }
-      }, [canvas]);
+      }, [canvas,maxStorage, usedStorage, remainingStorage, categorized]);
 
       useEffect(() => {
         async function categorize(){
@@ -152,7 +154,7 @@ function Storage({cancel}) {
         }
         
         categorize()
-
+        
       }, [files])
       
       function GetIcon({name}){
@@ -179,6 +181,10 @@ function Storage({cancel}) {
         return icon
       }
 
+      function clearAllData(){
+         dispatch(clearFiles([]))
+      }
+
       
     
 
@@ -186,7 +192,7 @@ function Storage({cancel}) {
     <Modal className='storageModal' defaultCancel={false}>
         <div className="title">
             <i className="cancel" onClick={cancel}><ArrowLeft color='var(--baseBlack900)' weight='bold' size={20} /></i>
-            <h3>Settings</h3>
+            <h3>Storage</h3>
         </div>
         <div className='Storage'>
             <div className="chart"  data-before={`${Math.round(usedStorage.value)}mb of ${Math.round(maxStorage.value)}mb`}>
@@ -222,7 +228,7 @@ function Storage({cancel}) {
                 }
             </ul>
 
-            <span className="clearStorage" onClick={()=>db.clearData()}><Trash size={20} weight="bold"/>Clear all data</span>
+            <span className="clearStorage" onClick={clearAllData}><Trash size={20} weight="bold"/>Clear all data</span>
            </div>
     </Modal>
   )

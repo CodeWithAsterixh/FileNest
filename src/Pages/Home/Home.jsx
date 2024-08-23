@@ -15,6 +15,8 @@ function Home() {
   const { uploadProcess, handleFileChange } = useFileUpload(password);
   const [categorized, setCategorized] = useState([])
   const fileInputRef = useRef(null);
+  const [search, setSearch] = useState(false)
+  const [inputSearch, setInputSearch] = useState('')
 
   const [fileOpener, setFileOpener] = useState({
     shown: false,
@@ -49,7 +51,30 @@ function Home() {
       }
       setCategorized(categorizedFiles)
     }
-  }, [category, files])
+    
+    if(search&&search.trim() !== ''){
+      let searchFilter = files.filter(item => item.fileName.includes(search))
+
+      switch (category) {
+        case 'videos':
+          searchFilter = files.filter(file => file.type.includes('video')).filter(item => item.fileName.includes(search))
+          break;
+        case 'photos':
+          searchFilter = files.filter(file => file.type.includes('image')).filter(item => item.fileName.includes(search))
+          break;
+        case 'others':
+          searchFilter = files.filter(file => !file.type.includes('image') && !file.type.includes('video')).filter(item => item.fileName.includes(search))
+          break;
+      
+        default:
+          searchFilter = files.filter(item => item.fileName.includes(search))
+          break;
+      }
+      setCategorized(searchFilter)
+    }
+
+    
+  }, [category, files, search])
 
   
   
@@ -63,10 +88,10 @@ function Home() {
       <div className="controls">
         <label htmlFor="search" className="search">
           <div className="searchInput">
-              <input type="text"/>
-              <button><X /></button>
+              <input value={inputSearch} onChange={(e)=>setInputSearch(e.target.value)} type="text"/>
+              <button onClick={()=>setInputSearch('')}><X /></button>
           </div>
-          <button><MagnifyingGlass /></button>
+          <button onClick={()=> setSearch(inputSearch)}><MagnifyingGlass /></button>
         </label>
         <button onClick={()=> {return}}>Filters <Funnel color="var(--secondary100)" size={20} /></button>
       </div>

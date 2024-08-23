@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css';
 import { Route, Routes } from 'react-router-dom';
 import { ArrowArcRight, Eye, EyeClosed } from '@phosphor-icons/react';
-import { setFiles, setPassword, uploadFiles, loadFiles, loadTypes } from './Redux/ReducersAction';
+import { setFiles, setPassword, uploadFiles, loadFiles, loadTypes, setStorage } from './Redux/ReducersAction';
 import Home from './Pages/Home/Home';
 import ColorPalette, { setColor } from './Components/color pallete/ColoePalette';
 import Out from './Components/Outlet/Outlet';
@@ -53,8 +53,14 @@ function App() {
 
  
   useEffect(() => {
-    if(files.length>0){
+    if(files){
       loadTypes(files, dispatch)
+      let used = 0
+      files.map(file => {
+        const fileSize = Number(file.fileSize.toLowerCase().split(" mb")[0])      
+        used += fileSize
+      })
+      dispatch(setStorage(used))
     }
   }, [files]);
 
