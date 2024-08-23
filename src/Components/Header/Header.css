@@ -80,11 +80,13 @@
     transition: transform;
 }
 .Header nav a.uploading{
-    background-color: var(--none);
-    color: var(--secondary100);
+    background-color: var(--secondary500);
+    color: var(--secondary1000);
     position: relative;
-    padding: 0;
-    
+    padding: 5px;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 50%;
 }
 .Header nav a.uploading:before{
     font-size: var(--h6);

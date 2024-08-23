@@ -24,3 +24,231 @@
 .Modal.PasswordFixSettings .createPassword b.warn{
     color: var(--accent-Gold1000);
 }
+
+
+/* styles for storage */
+.Modal.storageModal .ModalInner{
+    padding: 0;
+    width: fit-content;
+
+    /* min-width: 500px; */
+    position: relative;
+    overflow: auto;
+}
+.Modal.storageModal .title {
+    width: 100%;
+    height: fit-content;
+    background-color: var(--baseBlack500);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+.Modal.storageModal .title i {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    padding: 10px;
+}
+.Modal.storageModal .title i:hover{
+    background-color: var(--baseBlack600);
+    transition-duration: 200ms;
+}
+.Modal.storageModal .title h3{
+    margin: 0;
+    font-size: var(--h5);
+    color: var(--baseBlack900);
+}
+.Modal.storageModal .ModalInner .Storage{
+    width: calc(100% - 20px);
+    height: fit-content;
+    overflow: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.Modal.storageModal .ModalInner .Storage .chart{
+    width: 100%;
+    height: 250px;
+    /* overflow: hidden; */
+    position: relative;
+}
+.Modal.storageModal .ModalInner .Storage .chart::before{
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--baseBlack900);
+    font-weight: bolder;
+    font-size: var(--h5);
+    max-width: 100px;
+    text-wrap: pretty;
+}
+.Modal.storageModal .ModalInner .Storage .chart canvas{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.Modal.storageModal .ModalInner .Storage .Lining {
+    width: 90%;
+    height: 10px;
+    min-height: 10px;
+    background-color: var(--baseBlack200);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 10px;
+    overflow-x: hidden;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.Modal.storageModal .ModalInner .Storage li{
+    width: var(--size);
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+.Modal.storageModal .ModalInner .Storage li.images{
+    background-color: #4b0082;
+    color: var(--baseWhite1000);
+
+}
+.Modal.storageModal .ModalInner .Storage li.videos{
+    background-color: #ffeb7f;
+    color: var(--secondary1000);
+
+}
+.Modal.storageModal .ModalInner .Storage li.apps{
+    background-color: #ff6f61;
+    color: var(--baseWhite1000);
+
+}
+.Modal.storageModal .ModalInner .Storage li.documents{
+    background-color: #28a745;
+    color: var(--baseWhite1000);
+
+}
+.Modal.storageModal .ModalInner .Storage li.others{
+    background-color: #add8e6;
+    color: var(--secondary1000);
+
+}
+
+/* hovered */
+.Modal.storageModal .ModalInner .Storage li.images:hover{
+    background-color: #320255;
+}
+.Modal.storageModal .ModalInner .Storage li.videos:hover{
+    background-color: #ffd700;
+}
+.Modal.storageModal .ModalInner .Storage li.apps:hover{
+    background-color: #ff4939;
+}
+.Modal.storageModal .ModalInner .Storage li.documents:hover{
+    background-color: #00751b;
+}
+.Modal.storageModal .ModalInner .Storage li.others:hover{
+    background-color: #41d0ff;
+}
+.Modal.storageModal .ModalInner .Storage li:hover{
+    transition-duration: 200ms;
+}
+
+.Modal.storageModal .ModalInner .Storage .totals{
+    width: 90%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    /* overflow: hidden; */
+    padding: 0;
+}
+.Modal.storageModal .ModalInner .Storage .totals b{
+    font-size: var(--body);
+    color: var(--baseBlack900);
+}
+
+.Modal.storageModal .ModalInner .Storage .categoryListing {
+    width: 90%;
+    height: fit-content;
+    display: grid;
+    align-items: center;
+    justify-content: flex-start;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+.Modal.storageModal .ModalInner .Storage .categoryListing li{
+    width: calc(100% - 20px);
+    height: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+.Modal.storageModal .ModalInner .Storage .categoryListing li span{
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: var(--body);
+}
+.Modal.storageModal .ModalInner .Storage .categoryListing li span b{
+    max-width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.Modal.storageModal .ModalInner .Storage .categoryListing li span.sizeTotal{
+    font-size: var(--body);
+    
+}
+
+/* clear storage */
+
+.Modal.storageModal .ModalInner .Storage .clearStorage {
+    width: calc(90% - 20px);
+    height: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--error400);
+    color: var(--error1000);
+    font-weight: 500;
+    font-size: var(--h5);
+    cursor: pointer;
+}
+
+.Modal.storageModal .ModalInner .Storage .clearStorage:hover {
+    background-color: var(--error1000);
+    color: var(--baseWhite1000);
+    transition-duration: 200ms;
+}
+
+@media screen and (max-width: 250px) {
+    .Modal.storageModal .ModalInner .Storage .categoryListing li span{
+        max-width: 20vw;
+    }
+}

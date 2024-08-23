@@ -28,6 +28,10 @@
   gap: 10px;
   user-select: none;
 }
+.Modal h1{
+  font-size: var(--h4);
+  color: var(--secondary1000);
+}
 .Modal .skip:active{
   transform: scale(0.95);
   transition-duration: 200ms;

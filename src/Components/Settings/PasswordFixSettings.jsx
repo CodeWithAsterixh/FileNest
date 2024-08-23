@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import './SettingsContent.css'
 import PasswordInput from './InputPassword';
 import { setPassword } from '../../Redux/ReducersAction';
+import { handlePasswordChange } from '../../Functions/DB';
+import { toast } from 'react-toastify';
 
 function PasswordFixSettings({cancel}) {
     const password = useSelector((state) => state.password.password);
@@ -25,8 +27,18 @@ function PasswordFixSettings({cancel}) {
                 return;
             }else{
                 setMessage({type: 'success', message: 'New password created', return: true})
-                dispatch(setPassword(inputVal))
-                localStorage.setItem('ps', inputVal);
+                handlePasswordChange(password,  inputVal).then(res => {
+                    
+                    if(res.success){
+                        dispatch(setPassword(inputVal))
+                        localStorage.setItem('ps', inputVal);
+                    }else{
+                        toast.error('error creating password', {
+                            position: "top-right",
+                        })
+                    }
+                })
+
                 cancel()
             }
             return;
@@ -53,12 +65,29 @@ function PasswordFixSettings({cancel}) {
     
             if (password === 'default') {
                 setMessage({type: 'success', message: 'New password created', return: true})
-                dispatch(setPassword(confirmPassword))
-                localStorage.setItem('ps', confirmPassword);
+                handlePasswordChange(password,  confirmPassword).then(res => {
+                    if(res.success){
+                        dispatch(setPassword(confirmPassword))
+                        localStorage.setItem('ps', confirmPassword);
+                    }else{
+                        toast.error('error creating password', {
+                            position: "top-right",
+                        })
+                    }
+                    
+                })
             } else {
                 setMessage({type: 'success', message: 'Password changed', return: true})
-                dispatch(setPassword(confirmPassword))
-                localStorage.setItem('ps', confirmPassword);
+                handlePasswordChange(password,  confirmPassword).then(res => {
+                    if(res.success){
+                        dispatch(setPassword(confirmPassword))
+                        localStorage.setItem('ps', confirmPassword);
+                    }else{
+                        toast.error('error creating password', {
+                            position: "top-right",
+                        })
+                    }
+                })
             }
         }
 

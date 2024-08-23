@@ -4,6 +4,7 @@ import './Settings.css'
 import { useState } from 'react'
 import Modal from '../Modal/Modal'
 import PasswordFixSettings from './PasswordFixSettings'
+import Storage from './Storage'
 
 function Settings() {
     const [shownSettings, setShownSettings] = useState(false)
@@ -14,10 +15,10 @@ function Settings() {
     })
 
 
-    function toggleShowSettings(){
+    async function toggleShowSettings(){
         setShownSettings(!shownSettings)
     }
-    function toggleShowSettingsOpen(content=<Modal><div>Settings content</div></Modal>, settingsFor){
+    async function toggleShowSettingsOpen(content=<Modal><div>Settings content</div></Modal>, settingsFor){
         if(content){
             if(settingsContent.settingsFor||settingsFor){
                 if( settingsContent.settingsFor == settingsFor){
@@ -64,7 +65,8 @@ function Settings() {
                 }
             </i>
             <ul className="actions">
-                <li>
+                <li onClick={()=>toggleShowSettingsOpen(<Storage cancel={()=>toggleShowSettingsOpen(null, 'storage')} />, 'storage')}>
+
                     <i className="title">Storage</i>
                     <Archive size={25} color="var(--secondary100)"/>
                 </li>

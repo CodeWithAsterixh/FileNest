@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css';
 import { Route, Routes } from 'react-router-dom';
 import { ArrowArcRight, Eye, EyeClosed } from '@phosphor-icons/react';
@@ -40,6 +40,8 @@ function App() {
     if (savedPassword) {
       if (savedPassword === 'default') {
         dispatch(setPassword('default'));
+        dispatch(loadFiles('default'));
+        
       } else {
         setInputPassword(true);
       }
@@ -47,13 +49,9 @@ function App() {
       localStorage.setItem('ps', 'false');
       setCreatePassword(true);
     }
-  }, [dispatch]);
+  }, []);
 
-  useEffect(() => {
-    if (password) {
-      dispatch(loadFiles(password));
-    }
-  }, [password, dispatch]);
+ 
   useEffect(() => {
     if(files.length>0){
       loadTypes(files, dispatch)
@@ -71,6 +69,7 @@ function App() {
       if (value.length > 0) {
         dispatch(setPassword(value));
         localStorage.setItem('ps', value);
+        dispatch(loadFiles(value));
         setInputPassword(false);
         setCreatePassword(false);
       }
@@ -82,14 +81,19 @@ function App() {
         if (value === savedPassword) {
           console.log('password is correct');
           dispatch(setPassword(value));
+          dispatch(loadFiles(value));
+          setInputPassword(false);
+          setCreatePassword(false);
         } else {
-          console.log('password is incorrect');
+          setInputPassword(true);
+          setCreatePassword(false);
+          toast.error("password is incorrect", {
+            position: "top-right",
+          })
         }
       }
     }
     
-    setInputPassword(false);
-    setCreatePassword(false);
   };
 
   return (
@@ -100,6 +104,7 @@ function App() {
             skip <ArrowArcRight weight='regular' size={20} />
           </span>
           <div className="createPassword">
+            <h1>Please Create Password</h1>
             <PasswordInput type={inputType} placeholder="Enter Password" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
             <button onClick={() => handleSubmit()} className='enter'>Create</button>
           </div>
@@ -107,6 +112,7 @@ function App() {
       ) : inputPassword ? (
         <Modal defaultCancel={false}>
           <div className="inputPassword">
+            <h1>Please Input Password</h1>
             <PasswordInput type={inputType} placeholder="Enter Password" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
             <button onClick={() => handleSubmit()} className='enter'>Enter</button>
           </div>

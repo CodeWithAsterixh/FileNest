@@ -2,6 +2,7 @@
 import { openDB } from 'idb';
 import CryptoJS from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
 
 class DB {
   constructor() {
@@ -80,10 +81,10 @@ class DB {
     if (data instanceof Blob) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => {
+        reader.onloadend = async () => {
           const arrayBuffer = reader.result;
           const wordArray = CryptoJS.lib.WordArray.create(new Uint8Array(arrayBuffer));
-          const encrypted = this.encryptWordArray(wordArray, password);
+          const encrypted = await this.encryptWordArray(wordArray, password);
           resolve(encrypted);
         };
         reader.onerror = reject;
@@ -105,7 +106,7 @@ class DB {
     };
   }
 
-  encryptWordArray(wordArray, password) {
+  async encryptWordArray(wordArray, password) {
     const salt = CryptoJS.lib.WordArray.random(128 / 8);
     const key = CryptoJS.PBKDF2(password, salt, { keySize: 256 / 32, iterations: 1000 });
     const iv = CryptoJS.lib.WordArray.random(128 / 8);
@@ -118,11 +119,11 @@ class DB {
     };
   }
 
-  decryptData(encryptedData, password) {
+  async decryptData(encryptedData, password) {
     if (!encryptedData || !encryptedData.blob.ciphertext || !encryptedData.blob.salt || !encryptedData.blob.iv) {
         throw new Error('Invalid encrypted data');
     }
-
+    
     try {
         const { ciphertext, salt, iv } = encryptedData.blob;
         const decodedCiphertext = CryptoJS.enc.Base64.parse(ciphertext);
@@ -148,7 +149,7 @@ class DB {
     const db = await this.dbPromise;
     const encryptedData = await db.get('files', id);
     if (encryptedData) {
-        const fileData = this.decryptData(encryptedData, password);
+        const fileData = await this.decryptData(encryptedData, password);
 
         // Check if fileData is binary (has words)
         if (fileData.words) {
@@ -189,7 +190,7 @@ class DB {
     const encryptedFiles = await db.getAll('files');    
     return Promise.all(encryptedFiles.map(async (encryptedData) => {
       
-      const fileData = this.decryptData(encryptedData, password);
+      const fileData = await this.decryptData(encryptedData, password);
       return { ...encryptedData, fileData: {...fileData}, id: encryptedData.id, fileType: encryptedData.fileType };
     }));
   }
@@ -246,6 +247,41 @@ class DB {
     const db = await this.dbPromise;
     await db.clear('files');
   }
+
+
+  async changePassword(oldPassword, newPassword) {
+    try {
+        const db = await this.dbPromise;
+        const tx = db.transaction('files', 'readwrite');
+        const store = tx.objectStore('files');
+        const files = await store.getAll();
+        for (const file of files) {
+            // Decrypt the file with the old password
+            const decryptedData = await this.decryptData(file, oldPassword);
+
+            // Re-encrypt the file with the new password
+            const reEncryptedData = await this.encryptData(decryptedData, newPassword);
+
+            // Prepare the updated file object
+            const updatedFile = {
+                ...file,
+                blob: reEncryptedData,                 // Update the encrypted data
+                modifiedDate: new Date().toISOString() // Optionally update the modified date
+            };
+
+            // Save the updated file back to IndexedDB
+            // This will overwrite the existing record with the same id
+            await store.put(updatedFile);
+        }
+
+        await tx.done;
+        return { success: true, message: 'Password changed and files re-encrypted successfully.' };
+    } catch (error) {
+        console.error('Error during password change:', error);
+        return { success: false, message: 'Failed to change password and re-encrypt files.' };
+    }
+}
+
 }
 
 export const db = new DB();
@@ -256,4 +292,15 @@ export async function uploadFilesSave(file, password) {
 
 export async function deleteFile(id) {
   return db.deleteFile(id);
+}
+export async function handlePasswordChange(oldPassword, newPassword) {
+  const result = await db.changePassword(oldPassword, newPassword);
+  if (result.success) {
+    toast.success(result.message);
+    return result
+
+  } else {
+    toast.error(result.message);
+    return result
+  }
 }

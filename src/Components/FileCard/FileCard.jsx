@@ -14,15 +14,17 @@ import { toast } from 'react-toastify';
 
 
  // Action to download a file
- export const handleDownload = async (file, password) => {
+ export const handleDownload = async (file, password, download=true) => {
     try {
         const fileBlob = await db.handleRetrieveFile(file.id, password);
-        if (fileBlob) {
+        if (fileBlob&&download) {
             const link = document.createElement('a');
             link.href = fileBlob;
             link.download = file.fileName;
             link.click();
         }
+
+        return fileBlob
     } catch (error) {
         console.error('Failed to download file:', error);
     }
@@ -50,7 +52,7 @@ const FileCard = ({ file, open }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [renameAble, editedName, file.fileName, file.id, dispatch]);
 
-    const handleRenameClick = () => {
+    const handleRenameClick = async () => {
         setRenameAble(true);
         setEditedName(file.fileName.split(".")[0]);
     };
@@ -67,7 +69,7 @@ const FileCard = ({ file, open }) => {
         }
         
     }
-    function handleUpdateRename(newName) {
+    async function handleUpdateRename(newName) {
         const updatedFiles = files.map((lFile) => {
             if (lFile.id === file.id) {
                 // Ensure the new name includes the correct file type
@@ -83,7 +85,7 @@ const FileCard = ({ file, open }) => {
     
         const updatedFile = updatedFiles.find((f) => f.id === file.id);
     
-        db.updateFile(file.id, updatedFile, password)
+        await db.updateFile(file.id, updatedFile, password)
             .then((result) => {
                 if (result.success) {
                     if(result.type == 'warn'){
@@ -100,7 +102,7 @@ const FileCard = ({ file, open }) => {
             });
     }
 
-    const handleBlur = () => {
+    const handleBlur = async () => {
         if (renameAble) {
             setRenameAble(false);
             if (editedName !== file.fileName.split(".")[0]) {
@@ -182,7 +184,7 @@ const FileCard = ({ file, open }) => {
     };
 
     // Action to delete a file
-    const handleDelete = async (file) => {
+    const handleDelete = async () => {
         try {
             await db.deleteFile(file.id); // Assuming deleteFile is implemented in your DB class
             // Dispatch an action to remove the file from the Redux store

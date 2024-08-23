@@ -12,7 +12,9 @@ const filesSlice = createSlice({
     },
     addFile: (state, action) => {
       const { file, password } = action.payload;
-      state.unshift(file);
+      if(!state.find(i => i.id == file.id)){
+        state.unshift(file);
+      }
       // Assuming you want to save the file to the database when it's added
       // Implement your save logic here
     },
@@ -24,9 +26,49 @@ const filesSlice = createSlice({
     },
   },
 });
-
 export const { setFiles, addFile, deleteFile } = filesSlice.actions;
 export const fileReducer = filesSlice.reducer;
+
+
+const storageSlice = createSlice({
+  name: 'storage',
+  initialState: {
+    maxStorage: {
+      value: 1024,
+      percent: 100 // Total storage is always 100%
+    },
+    usedStorage: {
+      value: 0,
+      percent: 0
+    },
+    remainingStorage: {
+      value: 1024,
+      percent: 100
+    },
+    categorized: null
+  },
+  reducers: {
+    setStorage: (state, action) => {
+      const newUsedStorage = action.payload;
+
+      // Update usedStorage
+      state.usedStorage.value = newUsedStorage;
+      state.usedStorage.percent = Math.round((newUsedStorage / state.maxStorage.value) * 100);
+
+      // Update remainingStorage
+      const newRemainingStorage = state.maxStorage.value - newUsedStorage;
+      state.remainingStorage.value = newRemainingStorage;
+      state.remainingStorage.percent = Math.round((newRemainingStorage / state.maxStorage.value) * 100);
+    },
+    loadCategories: (state, action) => {
+      state.categorized = action.payload;
+    }
+    
+  },
+});
+
+export const { setStorage, loadCategories } = storageSlice.actions;
+export const storageReducer = storageSlice.reducer;
 
 // Thunk to upload files and save them to the DB
 export const uploadFiles = (files, password) => async (dispatch) => {
@@ -44,6 +86,12 @@ export const uploadFiles = (files, password) => async (dispatch) => {
     }));
     
     const indexes = filesWithUrls.length - 1
+    let used = 0
+    filesWithUrls.map(file => {
+      const fileSize = Number(file.fileSize.toLowerCase().split(" mb")[0])      
+      used += fileSize
+    })
+    dispatch(setStorage(used))
     let val = 0
     const loading = setInterval(()=>{
       if(val < filesWithUrls.length){
@@ -65,6 +113,7 @@ export const uploadFiles = (files, password) => async (dispatch) => {
 export const loadFiles = (password) => async (dispatch) => {
   try {
     // Fetch files from the database
+    
     const dbFiles = await db.getAllFiles(password);
     // Fetch the file blobs
     const fileBlobs = await Promise.all(dbFiles.map(file => db.getFileBlob(file.id, password)));
@@ -76,14 +125,21 @@ export const loadFiles = (password) => async (dispatch) => {
     }));
     
     const indexes = filesWithUrls.length - 1
+    let used = 0
+    filesWithUrls.map(file => {
+      const fileSize = Number(file.fileSize.toLowerCase().split(" mb")[0])      
+      used += fileSize
+    })
+    dispatch(setStorage(used))
+    
     let val = 0
-    const loading = setInterval(()=>{
-      if(val < filesWithUrls.length){
-        dispatch(addFile({file:filesWithUrls[val], password}));        
+    const loading = setInterval(async ()=>{
+      if(val < filesWithUrls.length){        
+        await dispatch(addFile({file:filesWithUrls[val], password}));        
         val++
       }
       
-    }, 100)
+    }, 10)
     if(val >= filesWithUrls.length){
       clearInterval(loading)
     }
@@ -95,7 +151,7 @@ export const loadFiles = (password) => async (dispatch) => {
   }
 };
 
-export const loadTypes = (files, dispatch) => {
+export const loadTypes = async (files, dispatch) => {
   files.map(file => {
     dispatch(addType(file.fileType.split('.')[1]));
     
@@ -114,6 +170,8 @@ const passwordSlice = createSlice({
   reducers: {
     setPassword: (state, action) => {
       state.password = action.payload;
+
+      
     },
   },
 });
