@@ -20,6 +20,7 @@ const filesSlice = createSlice({
     },
     deleteFile: (state, action) => {
       const { id } = action.payload;
+      db.deleteFile(id)
       return state.filter((i) => i.id !== id);
     },
     clearFiles: (state, action) => {
