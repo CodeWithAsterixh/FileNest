@@ -169,6 +169,9 @@ export const loadFiles = (password) => async (dispatch) => {
   } catch (error) {
     // db.clearData()
     processing.error('error loading files')
+    setTimeout(() => {
+      processing.clear()
+    }, 2000);
     // console.error('Error loading files:', error);
     // Handle error (e.g., show notification to the user)
   }
