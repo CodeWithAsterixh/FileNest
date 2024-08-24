@@ -24,6 +24,7 @@ const filesSlice = createSlice({
     },
     clearFiles: (state, action) => {
       // Handle clearing the data from IndexedDB in the worker as well
+      db.clearData()
       return action.payload;
     },
   },
