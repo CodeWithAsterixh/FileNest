@@ -41,6 +41,24 @@ body{
 *::-webkit-scrollbar{
   display: none;
 }
+
+*.loading{
+  color: var(--baseBlack800);
+  animation: showUploading 1s infinite;
+  animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+*.error{
+  color: var(--error800);
+}
+*.success{
+  color: var(--success1000);
+}
+*.warn{
+  color: var(--accent-Gold800);
+}
+*.normal{
+  color: var(--baseBlack800);
+}
 @keyframes showUploading{
   0% {
       opacity: 100%;

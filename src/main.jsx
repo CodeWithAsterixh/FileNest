@@ -5,13 +5,18 @@ import './index.css'
 import { Provider } from 'react-redux'
 import store from './Redux/store.js'
 import { BrowserRouter } from 'react-router-dom'
+import { ProcessProvider } from './Functions/processReturn.jsx'
+
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter >
-        <App />
-      </BrowserRouter>
+        <ProcessProvider>
+          <BrowserRouter >
+            <App />
+          </BrowserRouter>
+        </ProcessProvider>
     </Provider>
   </StrictMode>,
 )

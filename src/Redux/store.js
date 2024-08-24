@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { FileCategoryReducer, fileReducer, PasswordReducer, storageReducer } from './ReducersAction'; //the reducers
+import { fileReducer, PasswordReducer, FileCategoryReducer, storageReducer } from './ReducersAction';
+
+
 
 const store = configureStore({
   reducer: {
@@ -20,4 +22,11 @@ const store = configureStore({
   }, // Disable DevTools in productio
 });
 
+
+
+
+
+
 export default store;
+
+

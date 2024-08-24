@@ -13,7 +13,6 @@ import Modal from './Components/Modal/Modal';
 import './App.css'
 import { uploadFilesSave } from './Functions/DB';
 import PasswordInput from './Components/Settings/InputPassword';
-
 function App() {
   const files = useSelector((state) => state.files);
   const password = useSelector((state) => state.password.password);
@@ -23,6 +22,7 @@ function App() {
   const [inputType, setInputType] = useState('password');
   const [showPassword, setShowPassword] = useState(false);
   const [inputVal, setInputVal] = useState('');
+
   
   // Default color palette setup
   const defCol = [

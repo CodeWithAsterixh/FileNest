@@ -1,28 +1,32 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FileCard from '../../Components/FileCard/FileCard';
 import './Home.css';
 import { CloudArrowUp, FileDotted, FilePlus, FileSearch, Funnel, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useFileUpload } from '../../Functions/useFileUpload';
+import { useProcess } from '../../Functions/processReturn';
+import Modal from '../../Components/Modal/Modal';
+import Loader from '../../Components/Loader/Loader';
 
 function Home() {
   // Access files from the Redux store
   const files = useSelector((state) => state.files);
-  const types = useSelector((state) => state.categories.allTypes);
-  const category = useSelector((state) => state.categories.currentCategory);
+  const {currentCategory, types} = useSelector((state) => state.categories);
   const password = useSelector((state) => state.password.password);// Fetch this from state or props
   const { uploadProcess, handleFileChange } = useFileUpload(password);
   const [categorized, setCategorized] = useState([])
   const fileInputRef = useRef(null);
   const [search, setSearch] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
+  const {process, setProcess} = useProcess();
+  
 
   const [fileOpener, setFileOpener] = useState({
     shown: false,
     content: null,
     id: null
-})
+  })
   // useEffect(() => {
   //   console.table(files)
   // }, [files])
@@ -30,11 +34,11 @@ function Home() {
   //   console.table(types)
   // }, [types])
   useEffect(() => {
+    
     if(files){
-      // console.log(category);
       
       let categorizedFiles;
-      switch (category) {
+      switch (currentCategory) {
         case 'videos':
           categorizedFiles = files.filter(file => file.type.includes('video'))
           break;
@@ -49,6 +53,7 @@ function Home() {
           categorizedFiles = files
           break;
       }
+      
       setCategorized(categorizedFiles)
     }
     
@@ -56,11 +61,13 @@ function Home() {
       const all = files.map(file => {
         return {...file, fileNameLower: file.fileName.toLowerCase()}
       })
+      console.log(all);
+      
       let searchFilter =all.filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
 
       
 
-      switch (category) {
+      switch (currentCategory) {
         case 'videos':
           searchFilter =all.filter(file => file.type.includes('video')).filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
           break;
@@ -79,7 +86,16 @@ function Home() {
     }
 
     
-  }, [category, files, search])
+  }, [currentCategory, files, search])
+
+  useEffect(() => {
+    console.log(process);
+    
+  }, [process])
+  
+
+
+  
 
   
   
@@ -122,7 +138,12 @@ function Home() {
               categorized.map((file) => (
                 <FileCard open={{fileOpener, setFileOpener}} key={file.id} file={file} />
               ))
-            ) : (
+            ) : process.returned&&process.position == ''? 
+                <Modal className='loaderModal' defaultCancel={false}>
+                  <Loader/>
+                  <h3 className={process.type}>{process.message}</h3>
+                </Modal>
+            : (
               <div className="nofile">
               <p>No files available</p>
               <i onClick={handleButtonClick} >

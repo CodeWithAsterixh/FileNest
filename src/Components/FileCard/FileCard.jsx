@@ -73,7 +73,7 @@ const FileCard = ({ file, open }) => {
         const updatedFiles = files.map((lFile) => {
             if (lFile.id === file.id) {
                 // Ensure the new name includes the correct file type
-                const fileName = `${newName}${file.fileType}`;
+                const fileName = `${newName}${file.fileType.startsWith('.') ? file.fileType : `.${file.fileType}`}`;
                 return {
                     ...lFile,
                     fileName,
@@ -85,21 +85,25 @@ const FileCard = ({ file, open }) => {
     
         const updatedFile = updatedFiles.find((f) => f.id === file.id);
     
-        await db.updateFile(file.id, updatedFile, password)
-            .then((result) => {
-                if (result.success) {
-                    if(result.type == 'warn'){
-                        toast.warn('Device doesnt allow browser renaming, file not renamed!', {
-                            position: "top",
-                            icon: <WarningCircle size={20} />
-                          })
-                    }
-                    dispatch(setFiles(updatedFiles)); // Update Redux or local state
-                    setRenameAble(false); // Hide rename UI
-                } else {
-                    console.error(result.message);
+        try {
+            const result = await db.updateFile(file.id, updatedFile, password);
+            if (result.success) {
+                if (result.type === 'warn') {
+                    toast.warn('Device doesn\'t allow browser renaming, file not renamed!', {
+                        position: "top",
+                        icon: <WarningCircle size={20} />
+                    });
                 }
-            });
+                dispatch(setFiles(updatedFiles)); // Update Redux or local state
+                setRenameAble(false); // Hide rename UI
+            } else {
+                console.error(result.message);
+                toast.error('Failed to rename the file.');
+            }
+        } catch (error) {
+            console.error('Error during file rename:', error);
+            toast.error('An error occurred while renaming the file.');
+        }
     }
 
     const handleBlur = async () => {

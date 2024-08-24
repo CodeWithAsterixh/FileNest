@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Download, DownloadSimple, Share, X } from '@phosphor-icons/react'
+import { Copy, Download, DownloadSimple, Share, X } from '@phosphor-icons/react'
 import Modal from '../Modal/Modal'
 import './FileOpener.css'
 import { useDispatch } from 'react-redux';
@@ -14,6 +14,8 @@ function ImageOpener({password, file, close}) {
     useEffect(() => {
       const getUrl = async ()=>{
         const retrieved = await db.handleRetrieveFile(file.id, password)
+        console.log(retrieved);
+        
         setUrl(retrieved)
       }
 
@@ -30,10 +32,17 @@ function ImageOpener({password, file, close}) {
        }
    };
 
+   const handleCopy = async () => {
+      if(url){
+        const share = await db.createShareableLink(file.id, password)
+      }
+    };
+
+
   return (
     <Modal className='ImageViewerModal' defaultCancel={false}>
         <div className="top">
-            <span className="share"><Share size={20} color='var(--baseWhite1000)'/></span>
+            <span className="share" onClick={handleCopy}><Copy size={20} color='var(--baseWhite1000)'/></span>
             <span className="download" onClick={()=>handleDownload(file, password)}><DownloadSimple size={20} color='var(--baseWhite1000)'/></span>
             <span onClick={close}><X size={30} color='var(--baseWhite1000)' /></span>
         </div>

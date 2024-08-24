@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { v4 as uniqueId } from 'uuid';
 import { addFile } from '../Redux/ReducersAction';
 import { uploadFilesSave } from './DB';
+import { processing } from './processReturn';
 
 export function useFileUpload(password) {
   const dispatch = useDispatch();
@@ -17,6 +18,8 @@ export function useFileUpload(password) {
 
     setUploadProcess({ process: 1, size: files.length });
 
+    processing.loading('loading file', 'fileUpload')
+
     const fileArray = await Promise.all(
       Array.from(files).map(async (file, index) => {
         const { name, size, type } = file;
@@ -25,7 +28,7 @@ export function useFileUpload(password) {
         const uploadDate = new Date().toISOString();
         const fileId =  uniqueId()
         const preview = await generatePreview(fileExtension, file); // Generate a preview URL for images
-
+        processing.loading('loading file', 'fileUpload')
         await uploadFilesSave({ blob: file, fileName: name,
           fileType: `.${fileExtension}`,
           type,
@@ -38,6 +41,7 @@ export function useFileUpload(password) {
           description: '',
           id: fileId }, password);
         setUploadProcess({ process: 2, size: index + 1 });
+        processing.loading('uploading file', 'fileUpload')
           return {
           fileName: name,
           fileType: `.${fileExtension}`,
@@ -54,8 +58,12 @@ export function useFileUpload(password) {
 
       })
     );
+    processing.success('file uploaded', 'fileUpload')
 
     setUploadProcess({ process: 3, size: fileArray.length });
+    setTimeout(() => {
+      processing.clear()
+    }, 2000);
 
     fileArray.forEach(async (file) => {
       dispatch(addFile({ file, password }));

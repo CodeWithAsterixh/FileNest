@@ -38,6 +38,20 @@
     animation: load 2s linear infinite;
 }
 
+.Home .loaderModal .ModalInner{
+    max-width: fit-content !important;
+    max-height: fit-content !important;
+    min-width: fit-content !important;
+    min-height: fit-content !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.Home .loaderModal h3{
+    margin: 0;
+}
+
 
 .Home .nofile{
     width: 100vw;

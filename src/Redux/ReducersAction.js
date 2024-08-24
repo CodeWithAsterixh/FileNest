@@ -1,7 +1,9 @@
 // src/redux/filesSlice.js
 /* eslint-disable no-unused-vars */
 import { createSlice } from '@reduxjs/toolkit';
-import { db, uploadFilesSave } from '../Functions/DB';
+import { db } from '../Functions/DB';
+import { processing } from '../Functions/processReturn';
+
 
 const filesSlice = createSlice({
   name: 'files',
@@ -12,27 +14,23 @@ const filesSlice = createSlice({
     },
     addFile: (state, action) => {
       const { file, password } = action.payload;
-      if(!state.find(i => i.id == file.id)){
+      if (!state.find((i) => i.id == file.id)) {
         state.unshift(file);
       }
-      // Assuming you want to save the file to the database when it's added
-      // Implement your save logic here
     },
     deleteFile: (state, action) => {
       const { id } = action.payload;
-      return state.filter(i => i.id !== id);
-      // Assuming you want to save the file to the database when it's added
-      // Implement your save logic here
+      return state.filter((i) => i.id !== id);
     },
     clearFiles: (state, action) => {
-      db.clearData()
-      return action.payload
-    }
+      // Handle clearing the data from IndexedDB in the worker as well
+      return action.payload;
+    },
   },
 });
+
 export const { setFiles, addFile, deleteFile, clearFiles } = filesSlice.actions;
 export const fileReducer = filesSlice.reducer;
-
 
 
 const storageSlice = createSlice({
@@ -93,71 +91,85 @@ export const { setStorage, loadCategories, clearStorage } = storageSlice.actions
 export const storageReducer = storageSlice.reducer;
 
 // Thunk to upload files and save them to the DB
-export const uploadFiles = (files, password) => async (dispatch) => {
-  try {
-    // Upload files and get their IDs
-    const ids = await uploadFilesSave(files, password);
-    // Fetch the file blobs from the database
-    const fileUrls = await Promise.all(ids.map(id => db.getFileBlob(id, password)));
-    
-    // Create file objects with URLs
-    const filesWithUrls = fileUrls.map((blob, index) => ({
-      ...files[index],
-      id: ids[index],
-      url: URL.createObjectURL(blob),
-    }));
-    
-    const indexes = filesWithUrls.length - 1
-    
-    let val = 0
-    const loading = setInterval(()=>{
-      if(val < filesWithUrls.length){
-        dispatch(addFile({file:filesWithUrls[val], password}));        
-        val++
-      }
-      
-    }, 100)
-    if(val >= filesWithUrls.length){
-      clearInterval(loading)
+export const uploadFiles = (files, password) => (dispatch) => {
+  const worker = new Worker(new URL('../Functions/fileWorker.js', import.meta.url));
+
+  worker.onmessage = (event) => {
+    const { type, ids, error } = event.data;
+
+    switch (type) {
+      case 'UPLOAD_SUCCESS':
+        // Load the files with their IDs and URLs
+        ids.forEach(async (id, index) => {
+          const fileWithUrl = {
+            ...files[index],
+            id,
+            url: URL.createObjectURL(files[index].blob), // Create a URL for the Blob
+          };
+          dispatch(addFile({ file: fileWithUrl, password }));
+        });
+        break;
+      case 'UPLOAD_ERROR':
+        console.error('Error uploading files:', error);
+        // Handle error (e.g., show notification to the user)
+        break;
+      default:
+        console.error('Unknown worker message type:', type);
     }
-    } catch (error) {
-    console.error('Error uploading files:', error);
-    // Handle error (e.g., show notification to the user)
-  }
+
+    worker.terminate(); // Terminate the worker after the task is complete
+  };
+
+  worker.postMessage({ type: 'UPLOAD_FILES', data: { files, password } });
 };
 
 // Thunk to load files from DB
 export const loadFiles = (password) => async (dispatch) => {
   try {
     // Fetch files from the database
-    
+    processing.loading('fetching files')
     const dbFiles = await db.getAllFiles(password);
+
+    
     // Fetch the file blobs
     const fileBlobs = await Promise.all(dbFiles.map(file => db.getFileBlob(file.id, password)));
-    
+    processing.loading('fetching blobs')
     // Create file objects with URLs
     const filesWithUrls = dbFiles.map((file, index) => ({
       ...file,
       url: URL.createObjectURL(fileBlobs[index]),
     }));
     
+    processing.loading('loading files')
     const indexes = filesWithUrls.length - 1
     
     let val = 0
+
+    
     const loading = setInterval(async ()=>{
-      if(val < filesWithUrls.length){        
+      if(val < filesWithUrls.length){   
+        
         await dispatch(addFile({file:filesWithUrls[val], password}));        
+      
         val++
       }
       
     }, 10)
-    if(val >= filesWithUrls.length){
-      clearInterval(loading)
+    
+    if(filesWithUrls){
+      processing.success('file loaded')
+      setTimeout(() => {
+        processing.clear()
+      }, 2000);
     }
 
+      
+      return () => clearInterval(loading)
     
   } catch (error) {
-    console.error('Error loading files:', error);
+    // db.clearData()
+    processing.error('error loading files')
+    // console.error('Error loading files:', error);
     // Handle error (e.g., show notification to the user)
   }
 };
@@ -214,3 +226,8 @@ const fileCategorySlice = createSlice({
 
 export const { setCategory, addType } = fileCategorySlice.actions;
 export const FileCategoryReducer = fileCategorySlice.reducer;
+
+
+
+
+
