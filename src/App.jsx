@@ -13,6 +13,7 @@ import Modal from './Components/Modal/Modal';
 import './App.css'
 import { uploadFilesSave } from './Functions/DB';
 import PasswordInput from './Components/Settings/InputPassword';
+import { processing } from './Functions/processReturn';
 function App() {
   const files = useSelector((state) => state.files);
   const password = useSelector((state) => state.password.password);
@@ -85,7 +86,7 @@ function App() {
     if (savedPassword) {      
       if (value.length > 0) {
         if (value === savedPassword) {
-          console.log('password is correct');
+          processing.success('password is correct', 'password');
           dispatch(setPassword(value));
           dispatch(loadFiles(value));
           setInputPassword(false);

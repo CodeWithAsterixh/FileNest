@@ -112,11 +112,12 @@ export const uploadFiles = (files, password) => (dispatch) => {
         });
         break;
       case 'UPLOAD_ERROR':
-        console.error('Error uploading files:', error);
+        processing.error('Error uploading files:', '');
+
         // Handle error (e.g., show notification to the user)
         break;
       default:
-        console.error('Unknown worker message type:', type);
+        processing.error('Unknown worker message type:', '');
     }
 
     worker.terminate(); // Terminate the worker after the task is complete

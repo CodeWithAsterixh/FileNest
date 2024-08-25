@@ -20,9 +20,7 @@ function Header() {
     fileInputRef.current.click();
   };
 
-  function handleChangeTypeList(type){
-    console.log(type.toLowerCase());
-    
+  function handleChangeTypeList(type){    
     dispatch(setCategory(type.toLowerCase()))
   }
 

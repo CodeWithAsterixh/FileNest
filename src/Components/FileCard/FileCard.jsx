@@ -9,6 +9,7 @@ import { deleteFile, setFiles } from '../../Redux/ReducersAction';
 import VideoOpener from './VideoOpener';
 import ImageOpener from './ImageOpener';
 import { toast } from 'react-toastify';
+import { processing } from '../../Functions/processReturn';
 
 
 
@@ -26,7 +27,7 @@ import { toast } from 'react-toastify';
 
         return fileBlob
     } catch (error) {
-        console.error('Failed to download file:', error);
+        processing.error('Failed to download file:', 'download');
     }
 };
 const FileCard = ({ file, open }) => {
@@ -97,11 +98,9 @@ const FileCard = ({ file, open }) => {
                 dispatch(setFiles(updatedFiles)); // Update Redux or local state
                 setRenameAble(false); // Hide rename UI
             } else {
-                console.error(result.message);
                 toast.error('Failed to rename the file.');
             }
         } catch (error) {
-            console.error('Error during file rename:', error);
             toast.error('An error occurred while renaming the file.');
         }
     }
@@ -194,7 +193,7 @@ const FileCard = ({ file, open }) => {
             // Dispatch an action to remove the file from the Redux store
             dispatch(deleteFile({ id: file.id }));
         } catch (error) {
-            console.error('Failed to delete file:', error);
+            processing.error('Failed to delete file:', 'delete');
         }
     };
 

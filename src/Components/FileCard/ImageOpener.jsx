@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { db, deleteFile } from '../../Functions/DB';
 import { handleDownload } from './FileCard';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 function ImageOpener({password, file, close}) {
     const dispatch = useDispatch();
@@ -14,7 +15,7 @@ function ImageOpener({password, file, close}) {
     useEffect(() => {
       const getUrl = async ()=>{
         const retrieved = await db.handleRetrieveFile(file.id, password)
-        console.log(retrieved);
+        // console.log(retrieved);
         
         setUrl(retrieved)
       }
@@ -28,8 +29,8 @@ function ImageOpener({password, file, close}) {
            // Dispatch an action to remove the file from the Redux store
            dispatch(deleteFile({ id: file.id }));
        } catch (error) {
-           console.error('Failed to delete file:', error);
-       }
+        toast.error('Failed to delete file:');
+      }
    };
 
    const handleCopy = async () => {

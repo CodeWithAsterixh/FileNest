@@ -2,6 +2,7 @@
 import { openDB } from 'idb';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-toastify';
+import { processing } from './processReturn';
 
 class DB {
   constructor() {
@@ -133,7 +134,7 @@ class DB {
 
       return { success: true, message: 'Password changed and files re-encrypted successfully.' };
     } catch (error) {
-      console.error('Error during password change:', error);
+      processing.error('Error during password change:', 'passwordChange');
       return { success: false, message: 'Failed to change password and re-encrypt files.' };
     }
   }
@@ -168,7 +169,7 @@ class DB {
       // Provide the link for sharing
       return blobUrl;
     } catch (error) {
-      console.error('Error creating shareable link:', error);
+      toast.error('Error creating shareable link:');
       throw error;
     }
   };

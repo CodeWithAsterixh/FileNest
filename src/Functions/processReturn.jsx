@@ -36,28 +36,45 @@ export class Process {
     }
   }
 
-  error(message, position='') {
+  
+
+  error(message, position='', options={autoClose: 2000}) {
     this.process = { type: 'error', message, returned: true, position };
     this.updateProcess();
+    setTimeout(() => {
+      this.clear()
+    }, options.autoClose);
   }
 
-  success(message, position='') {
+  success(message, position='', options={autoClose: 2000}) {
     this.process = { type: 'success', message, returned: true, position };
     this.updateProcess();
+    setTimeout(() => {
+      this.clear()
+    }, options.autoClose);
   }
 
-  warn(message, position='') {
+  warn(message, position='', options={autoClose: 2000}) {
     this.process = { type: 'warn', message, returned: true, position };
     this.updateProcess();
+    setTimeout(() => {
+      this.clear()
+    }, options.autoClose);
   }
 
-  normal(message, position='') {
+  normal(message, position='', options={autoClose: 2000}) {
     this.process = { type: 'normal', message, returned: true, position };
     this.updateProcess();
+    setTimeout(() => {
+      this.clear()
+    }, options.autoClose);
   }
-  loading(message, position='') {
+  loading(message, position='', options={autoClose: 2000}) {
     this.process = { type: 'loading', message, returned: true, position };
     this.updateProcess();
+    setTimeout(() => {
+      this.clear()
+    }, options.autoClose);
   }
 
   clear() {

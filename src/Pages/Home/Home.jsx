@@ -61,7 +61,6 @@ function Home() {
       const all = files.map(file => {
         return {...file, fileNameLower: file.fileName.toLowerCase()}
       })
-      console.log(all);
       
       let searchFilter =all.filter(item => item.fileNameLower.toLowerCase().includes(search.toLowerCase()))
 
@@ -89,7 +88,7 @@ function Home() {
   }, [currentCategory, files, search])
 
   useEffect(() => {
-    console.log(process);
+    // console.log(process);
     
   }, [process])
   
