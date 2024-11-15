@@ -18,7 +18,7 @@ const FileActions: React.FC<FileActionsProps> = ({
   return (
     <AppBar
       position="sticky"
-      className="top-14 z-0 !bg-neutral-200 dark:!bg-black"
+      className="top-14 !z-0 !bg-neutral-200 dark:!bg-black"
     >
       <Toolbar>
         <Tooltip title="Upload Files">
