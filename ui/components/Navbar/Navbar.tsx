@@ -116,7 +116,7 @@ function NavBar({}: Props) {
           >
             <button
               onClick={handleToggleSideBarSize}
-              className="text-xl min-[498px]:text-2xl sm:text-3xl text-black dark:text-white"
+              className="text-xl sm:text-2xl text-black dark:text-white"
             >
               {size === "full" ? <GoSidebarExpand /> : <GoSidebarCollapse />}
             </button>

@@ -40,7 +40,10 @@ export default function Home() {
               onClose={() => closeModal("uploadFiles")}
               onUpload={upload}
             />,
-            { closeOutClick: true },
+            {
+              closeOutClick: true,
+              boxStyles: "!bg-neutral-100 dark:!bg-neutral-900",
+            },
             "uploadFiles"
           );
         }}

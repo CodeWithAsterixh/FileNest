@@ -20,7 +20,7 @@ const FileActions: React.FC<FileActionsProps> = ({
       position="sticky"
       className="top-14 !z-0 !bg-neutral-200 dark:!bg-black"
     >
-      <Toolbar>
+      <Toolbar className="!flex flex-wrap">
         <Tooltip title="Upload Files">
           <IconButton color="primary" onClick={onUpload}>
             <MdUploadFile />
