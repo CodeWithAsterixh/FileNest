@@ -12,7 +12,7 @@ const Header = () => {
   return (
     <AppBar
       position="sticky"
-      className="!z-[1] bg-neutral-100 dark:bg-neutral-900"
+      className="!z-[1] !bg-neutral-100 dark:!bg-neutral-900"
     >
       <Toolbar className="flex items-center justify-between gap-2">
         <Typography
