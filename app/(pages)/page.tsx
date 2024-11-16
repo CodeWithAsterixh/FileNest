@@ -4,6 +4,7 @@
 import FileActions from "@/ui/components/FileActions/FileActions";
 import { File as FileCardType } from "@/ui/components/FileGrid/FileCard";
 import FileManager from "@/ui/components/FileManager/FileManager";
+import { mockFiles } from "@/ui/components/FileManager/MockFiles";
 import { useModal } from "@/ui/components/Modal/Modal";
 import UploadDialog from "@/ui/components/UploadDialog/UploadDialog";
 import { useCallback, useEffect, useState } from "react";
@@ -18,6 +19,10 @@ export default function Home() {
     selectable: false,
     selected: [],
   });
+  const [files, setFiles] = useState<FileCardType[]>([]);
+  useEffect(() => {
+    setFiles(mockFiles);
+  }, []);
 
   const { openModal, closeModal } = useModal();
   const upload = useCallback((file: File) => {
@@ -27,24 +32,24 @@ export default function Home() {
 
   const handleDelete = useCallback(() => {
     console.log("Delete Files");
-  }, [selectItems.selectable]);
+    const deleted = files.filter(
+      (main) =>
+        !selectItems.selected.some((selected) => main.name === selected.name)
+    );
+    setFiles(deleted);
+  }, [selectItems.selected]);
   const handleSelect = useCallback(() => {
-    // Logic to delete selected files
-    if (!selectItems.selectable) {
-      setSelectItems((s) => ({
-        ...s,
-        selectable: true,
-      }));
-    } else {
-      setSelectItems({
-        selected: [],
-        selectable: false,
-      });
-    }
+    setSelectItems((s) => ({
+      ...s,
+      selectable: true,
+    }));
   }, [selectItems.selectable]);
-  useEffect(() => {
-    console.log(selectItems);
-  }, [selectItems]);
+  const handleUnSelect = useCallback(() => {
+    setSelectItems({
+      selected: [],
+      selectable: false,
+    });
+  }, [selectItems.selectable]);
 
   const handleRename = useCallback(() => {
     // Logic to rename a file
@@ -72,15 +77,17 @@ export default function Home() {
           );
         }}
         onDelete={selectItems.selectable ? handleDelete : undefined}
-        onRename={handleRename}
-        onPreview={handlePreview}
+        onRename={selectItems.selectable ? handleRename : undefined}
+        onPreview={selectItems.selectable ? handlePreview : undefined}
         handleSelect={handleSelect}
+        handleUnselect={selectItems.selectable ? handleUnSelect : undefined}
       />
       <FileManager
         selectable={selectItems.selectable}
         onSelectItem={(items) => {
           setSelectItems((s) => ({ ...s, selected: items }));
         }}
+        files={files}
       />
     </div>
   );

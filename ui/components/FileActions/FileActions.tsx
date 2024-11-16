@@ -15,6 +15,7 @@ interface FileActionsProps {
   onRename?: () => void;
   onPreview?: () => void;
   handleSelect?: () => void;
+  handleUnselect?: () => void;
 }
 
 const FileActions: React.FC<FileActionsProps> = ({
@@ -23,13 +24,14 @@ const FileActions: React.FC<FileActionsProps> = ({
   onRename,
   onPreview,
   handleSelect,
+  handleUnselect,
 }) => {
   return (
     <AppBar
       position="sticky"
-      className="top-14 !z-0 !bg-neutral-200 dark:!bg-black"
+      className="!top-14 !z-0 !bg-neutral-200 dark:!bg-black"
     >
-      <Toolbar className="!flex justify-between flex-wrap min-[300px]:flex-nowrap items-center">
+      <Toolbar className="!px-2 !flex justify-between flex-wrap min-[300px]:flex-nowrap items-center">
         <div className="w-full flex flex-wrap gap-2">
           <Tooltip title="Upload Files">
             <IconButton color="primary" onClick={onUpload}>
@@ -45,25 +47,43 @@ const FileActions: React.FC<FileActionsProps> = ({
             </Tooltip>
           )}
 
-          <Tooltip title="Rename File">
-            <IconButton color="secondary" onClick={onRename}>
-              <MdEdit />
-            </IconButton>
-          </Tooltip>
+          {onRename && (
+            <Tooltip title="Rename File">
+              <IconButton color="secondary" onClick={onRename}>
+                <MdEdit />
+              </IconButton>
+            </Tooltip>
+          )}
 
-          <Tooltip title="Preview File">
-            <IconButton color="info" onClick={onPreview}>
-              <MdVisibility />
+          {onPreview && (
+            <Tooltip title="Preview File">
+              <IconButton color="info" onClick={onPreview}>
+                <MdVisibility />
+              </IconButton>
+            </Tooltip>
+          )}
+        </div>
+        {handleUnselect && (
+          <Tooltip title="Select">
+            <IconButton
+              color="info"
+              className="!rounded-none"
+              onClick={handleUnselect}
+            >
+              <Typography variant="body2" component="strong">
+                cancel
+              </Typography>
             </IconButton>
           </Tooltip>
-        </div>
+        )}
+
         <Tooltip title="Select">
           <IconButton
             color="info"
             className="!rounded-none"
             onClick={handleSelect}
           >
-            <Typography variant="caption" component="strong">
+            <Typography variant="body2" component="strong">
               Select
             </Typography>
           </IconButton>

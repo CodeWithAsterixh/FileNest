@@ -21,6 +21,12 @@ const FileGrid = ({
       onSelectItem(selected);
     }
   }, [selected]);
+  useEffect(() => {
+    if (!selectable) {
+      setSelected([]);
+
+    }
+  }, [selectable]);
   const handleSelection = useCallback(
     (file: File) => {
       const isSelected = selected.find((f) => f.name === file.name);
