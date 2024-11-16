@@ -8,29 +8,43 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { BiVideo } from "react-icons/bi";
-import {
-  BsFile,
-  BsFileImage,
-  BsFiletypeDoc,
-  BsFiletypeDocx,
-  BsFiletypePdf,
-  BsFiletypeTxt,
-} from "react-icons/bs";
-import { TbFileUnknown } from "react-icons/tb";
-import { fileType } from "./fileTypes";
-import FileIcon from "./FileIcon";
+import { useCallback, useEffect, useState } from "react";
+import { BiCircle } from "react-icons/bi";
 import { CgMoreVertical } from "react-icons/cg";
+import { CiCircleCheck } from "react-icons/ci";
+import FileIcon from "./FileIcon";
 import FileImage from "./FileImage";
+import { fileType } from "./fileTypes";
+import clsx from "clsx";
 
 export interface File {
   name?: string;
   type?: fileType;
   size?: string;
 }
+/** if selectable is true,
+ * onSelected and must be passed to save
+ *  the selected file, else there will be no visible changes
+ * ### select?: {
+ * ### selectable?: boolean;
+ * ### onSelected?: (file: File) => void;
+ * ### selected?: boolean;
+ * ### };
+ */
+interface FileCardType extends File {
+  select?: {
+    selectable?: boolean;
+    onSelected?: (file: File) => void;
+    selected?: boolean;
+  };
+}
 
-export default function FileCard({ name, size, type = "unknown" }: File) {
+export default function FileCard({
+  name,
+  size,
+  type = "unknown",
+  select = { selectable: false },
+}: FileCardType) {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [mediaThumbnailError, setMediaThumbnailError] = useState(false);
   const isMenuOpen = Boolean(menuAnchorEl);
@@ -52,43 +66,68 @@ export default function FileCard({ name, size, type = "unknown" }: File) {
   }, [mediaThumbnailError]);
   let icon = <FileIcon type={type} />;
 
+  const handleSelect = useCallback(() => {
+    if (select.selectable && select.onSelected) {
+      select.onSelected({ name, size, type });
+    }
+  }, [select]);
+
   return (
     <Card
       elevation={2}
-      className="flex-grow relative isolate flex flex-col items-center justify-between min-[300px]:max-w-36 w-24 h-36 !bg-transparent"
+      className={clsx(
+        "flex-grow relative isolate flex flex-col items-center justify-between min-[300px]:max-w-36 w-24 h-36",
+        {
+          "!bg-blue-300 dark:!bg-blue-500": select.selected,
+          "!bg-transparent": !select.selected,
+        }
+      )}
+      onClick={handleSelect}
     >
-      {/* Menu Button */}
-      <IconButton
-        className="!absolute !z-10 top-2 right-2 text-black dark:text-white"
-        size="small"
-        onClick={handleMenuOpen}
-        aria-controls="file-card-menu"
-        aria-haspopup="true"
-        aria-expanded={isMenuOpen}
-      >
-        <CgMoreVertical />
-      </IconButton>
+      {!select.selectable ? (
+        <>
+          {/* Menu Button */}
+          <IconButton
+            className="!absolute !z-10 top-2 right-2 text-black dark:text-white"
+            size="small"
+            onClick={handleMenuOpen}
+            aria-controls="file-card-menu"
+            aria-haspopup="true"
+            aria-expanded={isMenuOpen}
+          >
+            <CgMoreVertical />
+          </IconButton>
 
-      {/* Menu */}
-      <Menu
-        id="file-card-menu"
-        anchorEl={menuAnchorEl}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        className="!z-10"
-      >
-        <MenuItem onClick={() => handleAction("open")}>Open</MenuItem>
-        <MenuItem onClick={() => handleAction("rename")}>Rename</MenuItem>
-        <MenuItem onClick={() => handleAction("delete")}>Delete</MenuItem>
-      </Menu>
+          {/* Menu */}
+          <Menu
+            id="file-card-menu"
+            anchorEl={menuAnchorEl}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            className="!z-10"
+          >
+            <MenuItem onClick={() => handleAction("open")}>Open</MenuItem>
+            <MenuItem onClick={() => handleAction("rename")}>Rename</MenuItem>
+            <MenuItem onClick={() => handleAction("delete")}>Delete</MenuItem>
+          </Menu>
+        </>
+      ) : (
+        <IconButton className="!absolute !z-10 top-2 right-2" size="small">
+          {select.selected ? (
+            <CiCircleCheck className="!text-black dark:!text-white" />
+          ) : (
+            <BiCircle className="!text-black dark:!text-white" />
+          )}
+        </IconButton>
+      )}
 
       {/* thumbnail (media thumbnail if available, icon if unavailable) */}
       <span className="w-full isolate relative h-[85%] shrink-0">

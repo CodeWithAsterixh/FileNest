@@ -1,8 +1,8 @@
 // components/FileManager.tsx
 import { File } from "../FileGrid/FileCard";
-import FileGrid from "../FileGrid/FileGrid";
+import FileGrid, { fileGridType } from "../FileGrid/FileGrid";
 
-const FileManager = () => {
+const FileManager = (props?: fileGridType) => {
   const mockFiles: File[] = [
     { name: "Document1", type: "apk", size: "2 MB" },
     { name: "Image1", type: "bmp", size: "1.5 MB" },
@@ -26,7 +26,7 @@ const FileManager = () => {
     { name: "Log", type: "txt", size: "2 KB" },
   ];
 
-  return <FileGrid files={mockFiles} />;
+  return <FileGrid {...props} files={mockFiles} />;
 };
 
 export default FileManager;
