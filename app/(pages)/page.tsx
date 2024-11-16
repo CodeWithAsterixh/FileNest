@@ -6,6 +6,7 @@ import { File as FileCardType } from "@/ui/components/FileGrid/FileCard";
 import FileManager from "@/ui/components/FileManager/FileManager";
 import { mockFiles } from "@/ui/components/FileManager/MockFiles";
 import { useModal } from "@/ui/components/Modal/Modal";
+import SimpleDialog from "@/ui/components/SimpleDialog/SimpleDialog";
 import UploadDialog from "@/ui/components/UploadDialog/UploadDialog";
 import { useCallback, useEffect, useState } from "react";
 // import { useDispatch } from "react-redux";
@@ -44,12 +45,25 @@ export default function Home() {
   }, [selectItems.selectable]);
   const handleDelete = useCallback(() => {
     console.log("Delete Files");
-    const deleted = files.filter(
-      (main) =>
-        !selectItems.selected.some((selected) => main.name === selected.name)
+    openModal(
+      <SimpleDialog
+        onAccept={() => {
+          const deleted = files.filter(
+            (main) =>
+              !selectItems.selected.some(
+                (selected) => main.name === selected.name
+              )
+          );
+          setFiles(deleted);
+          handleUnSelect();
+        }}
+        title={`Delete ${selectItems.selected.length} files`}
+        onClose={() => closeModal("deleteDialog")}
+        question="Do you want to delete these files?"
+      />,
+      {},
+      "deleteDialog"
     );
-    setFiles(deleted);
-    handleUnSelect();
   }, [selectItems.selected]);
   const handleRename = useCallback(() => {
     // Logic to rename a file
@@ -76,9 +90,21 @@ export default function Home() {
             "uploadFiles"
           );
         }}
-        onDelete={selectItems.selectable ? handleDelete : undefined}
-        onRename={selectItems.selectable ? handleRename : undefined}
-        onPreview={selectItems.selectable ? handlePreview : undefined}
+        onDelete={
+          selectItems.selectable && selectItems.selected.length > 0
+            ? handleDelete
+            : undefined
+        }
+        onRename={
+          selectItems.selectable && selectItems.selected.length > 0
+            ? handleRename
+            : undefined
+        }
+        onPreview={
+          selectItems.selectable && selectItems.selected.length > 0
+            ? handlePreview
+            : undefined
+        }
         handleSelect={handleSelect}
         handleUnselect={selectItems.selectable ? handleUnSelect : undefined}
       />
