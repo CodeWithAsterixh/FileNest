@@ -29,7 +29,7 @@ const FileActions: React.FC<FileActionsProps> = ({
   return (
     <AppBar
       position="sticky"
-      className="!top-14 !z-0 !bg-neutral-200 dark:!bg-black"
+      className="!top-14 !z-[1] !bg-neutral-200 dark:!bg-black"
     >
       <Toolbar className="!px-2 !flex justify-between flex-wrap min-[300px]:flex-nowrap items-center">
         <div className="w-full flex flex-wrap gap-2">

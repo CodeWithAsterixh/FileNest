@@ -24,7 +24,6 @@ const FileGrid = ({
   useEffect(() => {
     if (!selectable) {
       setSelected([]);
-
     }
   }, [selectable]);
   const handleSelection = useCallback(
@@ -41,7 +40,7 @@ const FileGrid = ({
   );
 
   return (
-    <div className="w-full flex items-start justify-start gap-2 flex-wrap p-2">
+    <div className="w-full relative z-0 flex items-start justify-start gap-2 flex-wrap p-2">
       {files &&
         files.map((file, index) => (
           <FileCard
