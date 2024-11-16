@@ -30,14 +30,6 @@ export default function Home() {
     console.log(file);
   }, []);
 
-  const handleDelete = useCallback(() => {
-    console.log("Delete Files");
-    const deleted = files.filter(
-      (main) =>
-        !selectItems.selected.some((selected) => main.name === selected.name)
-    );
-    setFiles(deleted);
-  }, [selectItems.selected]);
   const handleSelect = useCallback(() => {
     setSelectItems((s) => ({
       ...s,
@@ -50,7 +42,15 @@ export default function Home() {
       selectable: false,
     });
   }, [selectItems.selectable]);
-
+  const handleDelete = useCallback(() => {
+    console.log("Delete Files");
+    const deleted = files.filter(
+      (main) =>
+        !selectItems.selected.some((selected) => main.name === selected.name)
+    );
+    setFiles(deleted);
+    handleUnSelect();
+  }, [selectItems.selected]);
   const handleRename = useCallback(() => {
     // Logic to rename a file
     console.log("Rename File");
