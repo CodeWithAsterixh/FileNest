@@ -40,7 +40,7 @@ const FileGrid = ({
   );
 
   return (
-    <div className="w-full relative z-0 flex items-start justify-start gap-2 flex-wrap p-2">
+    <div className="w-full relative z-0 grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] min-[300px]:grid-cols-[repeat(auto-fit,minmax(7rem,1fr))] items-start justify-start gap-2  p-2">
       {files &&
         files.map((file, index) => (
           <FileCard

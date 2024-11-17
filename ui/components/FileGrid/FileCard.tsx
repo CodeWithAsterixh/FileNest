@@ -76,7 +76,7 @@ export default function FileCard({
     <Card
       elevation={2}
       className={clsx(
-        "flex-grow relative isolate flex flex-col items-center justify-between min-[300px]:max-w-36 w-24 h-36",
+        " relative isolate flex flex-col items-center justify-between h-36",
         {
           "!bg-blue-300 dark:!bg-blue-500": select.selected,
           "!bg-transparent": !select.selected,

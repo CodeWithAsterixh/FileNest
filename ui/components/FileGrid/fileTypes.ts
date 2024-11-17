@@ -45,4 +45,5 @@ export type fileType =
   | "iso"
   | "psd"
   | "ai"
-  | "unknown";
+  | "unknown"
+  | string;

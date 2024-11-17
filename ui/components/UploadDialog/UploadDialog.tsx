@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { FiFilePlus } from "react-icons/fi";
+import FileCard from "../FileGrid/FileCard";
 
 interface UploadDialogProps {
   onClose: () => void;
@@ -64,11 +65,29 @@ const UploadDialog: React.FC<UploadDialogProps> = ({ onClose, onUpload }) => {
       onClose();
     }
   };
+  function fmb(size: number) {
+    const units = ["Bts", "KB", "MB", "GB", "TB"];
+    let uindex = 0;
+    while (size >= 1024 && uindex < units.length - 1) {
+      size /= 1024;
+      uindex++;
+    }
+    return `${size.toFixed(2)}${units[uindex]}`;
+  }
 
   return (
     <div className="w-full p-3 !text-neutral-900 dark:!text-neutral-100">
       <DialogTitle>Upload File</DialogTitle>
-      <DialogContent className="w-full h-fit p-2 flex items-center justify-center">
+      <DialogContent className="w-full h-fit p-2 flex flex-col gap-2 items-center justify-center">
+        <div className="w-32 h-fit flex overflow-x-auto *:!w-full *:!shrink-0">
+          {selectedFile && (
+            <FileCard
+              name={selectedFile.name}
+              size={fmb(selectedFile.size)}
+              type={selectedFile.name.split(".").slice(-1)[0]}
+            />
+          )}
+        </div>
         <TextField
           type="file"
           fullWidth
