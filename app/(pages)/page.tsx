@@ -6,7 +6,7 @@ import FileActions from "@/ui/components/FileActions/FileActions";
 import { File } from "@/ui/components/FileGrid/FileCard";
 import FileManager from "@/ui/components/FileManager/FileManager";
 import { mockFiles } from "@/ui/components/FileManager/MockFiles";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // import { useDispatch } from "react-redux";
 
 export default function Home() {
